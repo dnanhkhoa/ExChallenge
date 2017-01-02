@@ -20,6 +20,5 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/ExChallenge/lib/commons-io-2.5-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.15.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
