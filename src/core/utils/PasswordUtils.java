@@ -1,5 +1,6 @@
 package core.utils;
 
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -12,7 +13,9 @@ public final class PasswordUtils {
 		return buffer;
 	}
 
-	public static String getRandomString(int length) {
-		return null;
+	public static String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		md.update(salt);
+		return StringUtils.byteToHex(md.digest(password.getBytes()));
 	}
 }

@@ -21,7 +21,8 @@ public final class FileIO {
 
 	private static final int BLOCK_SIZE = 512;
 
-	public static String hashSHA256File(File file) throws FileNotFoundException, IOException, NoSuchAlgorithmException {
+	public static String hashSHA256File(String file)
+			throws FileNotFoundException, IOException, NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		byte[] buffer = new byte[FileIO.BLOCK_SIZE];
 		int bytesRead = 0;
@@ -81,11 +82,11 @@ public final class FileIO {
 
 	}
 
-	public static void pack(File inFile, File outFile) {
+	public static void pack(String baseDir, List<String> inFiles, File outFile) {
 
 	}
 
-	public static void unpack(File inFile, File outFile) {
+	public static void unpack(File inFile, File outDir) {
 
 	}
 

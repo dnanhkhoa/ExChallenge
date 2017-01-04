@@ -29,11 +29,11 @@ public final class UserManager {
 		return null;
 	}
 
-	public static UserManager load(File filePath) {
+	public static UserManager load(String filePath) {
 		return null;
 	}
 
-	public void store(File filePath) {
+	public void store(String filePath) {
 
 	}
 }
