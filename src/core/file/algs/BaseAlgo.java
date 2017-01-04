@@ -14,7 +14,7 @@ public class BaseAlgo {
 		return DEFAULT_BLOCK_SIZE;
 	}
 
-	public int outputBlockSize(int blockSize) {
+	public int outputBlockSize() {
 		return DEFAULT_BLOCK_SIZE;
 	}
 

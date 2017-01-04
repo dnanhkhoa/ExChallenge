@@ -59,7 +59,7 @@ public class DES extends BaseAlgo {
 
 	@Override
 	public int outputBlockSize() {
-		return this.CIPHER.getOutputSize(this.DEFAULT_BLOCK_SIZE);
+		return this.CIPHER.getOutputSize(BaseAlgo.DEFAULT_BLOCK_SIZE);
 	}
 
 	@Override
