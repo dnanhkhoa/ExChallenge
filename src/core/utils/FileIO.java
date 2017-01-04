@@ -21,6 +21,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import core.file.FileMeta;
+import core.file.FileSizePair;
+import core.file.FileUnwrapper;
 import core.file.FileWrapper;
 import exception.ExceptionInfo;
 
@@ -43,7 +45,7 @@ public final class FileIO {
 	}
 
 	// Done
-	public static Pair<List<String>, List<String>> scanDir(File dirPath) throws ExceptionInfo {
+	public static Pair<List<String>, List<FileSizePair>> scanDir(File dirPath) throws ExceptionInfo {
 		if (!dirPath.isDirectory()) {
 			throw new ExceptionInfo("Path must be a valid directory!");
 		}
@@ -53,8 +55,8 @@ public final class FileIO {
 			base = dirPath.getParentFile().toURI();
 		}
 
-		List<String> files = new ArrayList<>();
 		List<String> dirs = new ArrayList<>();
+		List<FileSizePair> files = new ArrayList<>();
 
 		Collection<File> collection = FileUtils.listFilesAndDirs(dirPath, TrueFileFilter.INSTANCE,
 				TrueFileFilter.INSTANCE);
@@ -62,26 +64,27 @@ public final class FileIO {
 			if (file.isDirectory()) {
 				dirs.add(base.relativize(file.toURI()).getPath());
 			} else {
-				files.add(base.relativize(file.toURI()).getPath());
+				files.add(new FileSizePair(file.getPath(), base.relativize(file.toURI()).getPath(),
+						FileUtils.sizeOf(file)));
 			}
 		}
-		return new Pair<List<String>, List<String>>(dirs, files);
+		return new Pair<List<String>, List<FileSizePair>>(dirs, files);
 	}
 
 	// Done
-	public static Pair<List<String>, List<String>> scanDir(List<File> paths) throws ExceptionInfo {
-		List<String> files = new ArrayList<>();
+	public static Pair<List<String>, List<FileSizePair>> scanDir(List<File> paths) throws ExceptionInfo {
+		List<FileSizePair> files = new ArrayList<>();
 		List<String> dirs = new ArrayList<>();
 		for (File path : paths) {
 			if (path.isDirectory()) {
-				Pair<List<String>, List<String>> pair = scanDir(path);
+				Pair<List<String>, List<FileSizePair>> pair = scanDir(path);
 				dirs.addAll(pair.getLeft());
 				files.addAll(pair.getRight());
 			} else {
-				files.add(path.getName());
+				files.add(new FileSizePair(path.getPath(), path.getName(), FileUtils.sizeOf(path)));
 			}
 		}
-		return new Pair<List<String>, List<String>>(dirs, files);
+		return new Pair<List<String>, List<FileSizePair>>(dirs, files);
 	}
 
 	// Done
@@ -125,33 +128,58 @@ public final class FileIO {
 		}
 	}
 
-	public static void pack(String baseDir, List<File> inFiles, File outFile) {
+	// Done
+	public static void pack(List<File> inFiles, File outFile) throws IOException, Exception {
 		FileMeta fileMeta = new FileMeta();
-		try {
-			Pair<List<String>, List<String>> pair = FileIO.scanDir(inFiles);
-			
-			List<File> files = new ArrayList<>();
-			for (String file : pair.getRight()) {
-				
+
+		Pair<List<String>, List<FileSizePair>> pair = FileIO.scanDir(inFiles);
+
+		List<FileSizePair> fileSizePairs = new ArrayList<>();
+		for (FileSizePair fileSizePair : pair.getRight()) {
+			fileSizePairs.add(new FileSizePair(null, fileSizePair.getRelativePath(), fileSizePair.getSize()));
+		}
+
+		fileMeta.put("dirs", pair.getLeft());
+		fileMeta.put("files", fileSizePairs);
+
+		try (FileWrapper fileWrapper = new FileWrapper(outFile, fileMeta)) {
+			for (FileSizePair fileSizePair : pair.getRight()) {
+				try (InputStream inputStream = new FileInputStream(fileSizePair.getAbsolutePath())) {
+					byte[] buffer = new byte[FileIO.BLOCK_SIZE];
+					int bytesRead = 0;
+					while ((bytesRead = inputStream.read(buffer)) > 0) {
+						fileWrapper.write(buffer, 0, bytesRead);
+					}
+				}
 			}
-			
-			fileMeta.put("dirs", pair.getLeft());
-			//fileMeta.put("files", p);
-			
-			try (FileWrapper fileWrapper = new FileWrapper(outFile, fileMeta)) {
-				
-				
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (ExceptionInfo e) {
-			e.printStackTrace();
 		}
 	}
 
-	public static void unpack(File inFile, File outDir) {
-
+	// Done
+	public static void unpack(File inFile, File outDir) throws ClassNotFoundException, ExceptionInfo, Exception {
+		if (!outDir.isDirectory()) {
+			throw new ExceptionInfo("Output path must be a directory!");
+		}
+		try (FileUnwrapper fileUnwrapper = new FileUnwrapper(inFile)) {
+			FileMeta fileMeta = fileUnwrapper.readFileMeta();
+			List<String> dirs = (List<String>) fileMeta.get("dirs");
+			List<FileSizePair> files = (List<FileSizePair>) fileMeta.get("files");
+			for (String dir : dirs) {
+				FileUtils.forceMkdir(new File(outDir, dir));
+			}
+			for (FileSizePair file : files) {
+				try (OutputStream outputStream = new FileOutputStream(new File(outDir, file.getRelativePath()))) {
+					byte[] buffer = new byte[FileIO.BLOCK_SIZE];
+					int bytesRead = 0;
+					long maxBytesRead = file.getSize();
+					while ((bytesRead = fileUnwrapper.read(buffer, 0,
+							Math.toIntExact(Math.min(BLOCK_SIZE, maxBytesRead)))) > 0) {
+						outputStream.write(buffer, 0, bytesRead);
+						maxBytesRead -= bytesRead;
+					}
+				}
+			}
+		}
 	}
 
 	public static void copyFiles() {

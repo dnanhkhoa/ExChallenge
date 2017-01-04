@@ -10,6 +10,8 @@ import java.io.ObjectInputStream;
 
 import exception.ExceptionInfo;
 
+// Done
+
 public final class FileUnwrapper implements AutoCloseable {
 
 	private final static String SIGNATURE = "EXCHALLENGE";
@@ -46,6 +48,10 @@ public final class FileUnwrapper implements AutoCloseable {
 
 	public int read(byte[] buffer) throws IOException {
 		return this.dataInputStream.read(buffer);
+	}
+
+	public int read(byte[] buffer, int offset, int length) throws IOException {
+		return this.dataInputStream.read(buffer, offset, length);
 	}
 
 	@Override

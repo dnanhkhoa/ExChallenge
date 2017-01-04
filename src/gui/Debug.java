@@ -16,6 +16,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import org.apache.commons.io.FileUtils;
+
 import core.file.FileMeta;
 import core.file.FileUnwrapper;
 import core.file.FileWrapper;
@@ -26,7 +28,7 @@ import exception.ExceptionInfo;
 
 public final class Debug {
 
-	public static void main(String[] args) throws ExceptionInfo, UnsupportedEncodingException, IOException, ClassNotFoundException {
+	public static void main(String[] args) throws Exception {
 		/*
 		 * File[] fs =
 		 * FileSystemView.getFileSystemView().getFiles(FileSystemView.
@@ -60,8 +62,20 @@ public final class Debug {
 			e.printStackTrace();
 		}
 		*/
-		File file = new File("FileProtector\\123.zip");
-		System.out.println(file);
+		/*
+		File file = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\src");
+		List<File> files = new ArrayList<>();
+		files.add(file);
+		files.add(new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\release"));
+		File outFile = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.abc");
+		FileIO.pack(files, outFile);
+		*/
+		
+		
+		File f = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.abc");
+		FileIO.unpack(f, new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123456"));
+		
+		
 		/*
 		FileMeta fileMeta = new FileMeta();
 		fileMeta.put("Hello", "Khoa Hello Khoa");

@@ -10,6 +10,8 @@ import java.io.OutputStream;
 
 import exception.ExceptionInfo;
 
+// Done
+
 public final class FileWrapper implements AutoCloseable {
 
 	private final static String SIGNATURE = "EXCHALLENGE";
@@ -42,6 +44,10 @@ public final class FileWrapper implements AutoCloseable {
 
 	public void write(byte[] data) throws IOException {
 		this.dataOutputStream.write(data);
+	}
+
+	public void write(byte[] data, int offset, int length) throws IOException {
+		this.dataOutputStream.write(data, offset, length);
 	}
 
 	@Override
