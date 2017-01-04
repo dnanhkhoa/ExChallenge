@@ -13,6 +13,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 public class FileManager {
 
@@ -23,6 +24,14 @@ public class FileManager {
 	private JTable table;
 	private JToolBar toolBar_1;
 	private JComboBox comboBox;
+	private JLabel lblNewLabel;
+	private JButton btnNewButton_1;
+	private JButton btnDecrypt;
+	private JButton btnSignature;
+	private JButton btnVerify;
+	private JButton btnExport;
+	private JButton btnEdit;
+	private JButton btnLogOut;
 
 	/**
 	 * Launch the application.
@@ -82,6 +91,13 @@ public class FileManager {
 	private JToolBar getToolBar() {
 		if (toolBar == null) {
 			toolBar = new JToolBar();
+			toolBar.add(getBtnNewButton_1());
+			toolBar.add(getBtnDecrypt());
+			toolBar.add(getBtnSignature());
+			toolBar.add(getBtnVerify());
+			toolBar.add(getBtnExport());
+			toolBar.add(getBtnEdit());
+			toolBar.add(getBtnLogOut());
 		}
 		return toolBar;
 	}
@@ -111,6 +127,7 @@ public class FileManager {
 	private JToolBar getToolBar_1() {
 		if (toolBar_1 == null) {
 			toolBar_1 = new JToolBar();
+			toolBar_1.add(getLblNewLabel());
 		}
 		return toolBar_1;
 	}
@@ -120,5 +137,53 @@ public class FileManager {
 			comboBox.setEditable(true);
 		}
 		return comboBox;
+	}
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("New label");
+		}
+		return lblNewLabel;
+	}
+	private JButton getBtnNewButton_1() {
+		if (btnNewButton_1 == null) {
+			btnNewButton_1 = new JButton("Encrypt");
+		}
+		return btnNewButton_1;
+	}
+	private JButton getBtnDecrypt() {
+		if (btnDecrypt == null) {
+			btnDecrypt = new JButton("Decrypt");
+		}
+		return btnDecrypt;
+	}
+	private JButton getBtnSignature() {
+		if (btnSignature == null) {
+			btnSignature = new JButton("Signature");
+		}
+		return btnSignature;
+	}
+	private JButton getBtnVerify() {
+		if (btnVerify == null) {
+			btnVerify = new JButton("Verify");
+		}
+		return btnVerify;
+	}
+	private JButton getBtnExport() {
+		if (btnExport == null) {
+			btnExport = new JButton("Export");
+		}
+		return btnExport;
+	}
+	private JButton getBtnEdit() {
+		if (btnEdit == null) {
+			btnEdit = new JButton("Edit");
+		}
+		return btnEdit;
+	}
+	private JButton getBtnLogOut() {
+		if (btnLogOut == null) {
+			btnLogOut = new JButton("Log out");
+		}
+		return btnLogOut;
 	}
 }

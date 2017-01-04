@@ -13,19 +13,33 @@ public final class UserManager {
 		this.users = new ArrayList<>();
 	}
 
-	public void add() {
-
+	public void add(User user) {
+		users.add(user);
 	}
 
 	public void remove(String email) {
-
+		for(int i = 0; i < users.size(); i++){
+			if(users.get(i).getEmail().equals(email)){
+				users.remove(i);
+			}
+		}
 	}
 
 	public User findUserByEmail(String email) {
+		for(int i = 0; i < users.size(); i++){
+			if(users.get(i).getEmail().equals(email)){
+				return users.get(i);
+			}
+		}		
 		return null;
 	}
 
 	public User findUserByPublicKey(Key publicKey) {
+		for(int i = 0; i < users.size(); i++){
+			if(users.get(i).getPublicKey().equals(publicKey)){
+				return users.get(i);
+			}
+		}		
 		return null;
 	}
 
@@ -36,4 +50,16 @@ public final class UserManager {
 	public void store(String filePath) {
 
 	}
+	
+	public User checkLogin(String email, String password){
+		for(int i = 0; i < users.size(); i++){
+			if(users.get(i).getEmail().equals(email)){
+				if(users.get(i).getPassword().equals(password))
+					return users.get(i);
+			}
+		}		
+		return null;
+	}
+	
+	
 }

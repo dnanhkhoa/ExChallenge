@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
-public class RegisterDialog extends JDialog {
+public class EditDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField txtEmail;
@@ -53,7 +53,7 @@ public class RegisterDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public RegisterDialog() {
+	public EditDialog() {
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 14));
 		setTitle("Login");
 		setModal(true);
@@ -188,7 +188,7 @@ public class RegisterDialog extends JDialog {
 	}
 	private JButton getBtnSignUp() {
 		if (btnSignUp == null) {
-			btnSignUp = new JButton("Sign up");
+			btnSignUp = new JButton("Update");
 		}
 		return btnSignUp;
 	}
