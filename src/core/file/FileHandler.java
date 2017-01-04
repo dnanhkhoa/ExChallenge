@@ -1,16 +1,16 @@
 package core.file;
 
-import java.io.File;
+import java.util.List;
 
 public final class FileHandler {
 
 	private static final String SIGNATURE = "";
 
-	public FileHandler() {
-	}
+	private List<String> paths;
 
-	public static boolean isEncryptedFile(File filePath) {
-		return false;
+	private boolean isEncrypted;
+
+	public FileHandler() {
 	}
 
 	public void encrypt() {
@@ -30,7 +30,7 @@ public final class FileHandler {
 	}
 
 	private void pack() {
-
+		
 	}
 
 	private void unpack() {
