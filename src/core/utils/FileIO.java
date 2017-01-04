@@ -20,6 +20,8 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
+import core.file.FileMeta;
+import core.file.FileWrapper;
 import exception.ExceptionInfo;
 
 public final class FileIO {
@@ -123,8 +125,29 @@ public final class FileIO {
 		}
 	}
 
-	public static void pack(String baseDir, List<String> inFiles, File outFile) {
-
+	public static void pack(String baseDir, List<File> inFiles, File outFile) {
+		FileMeta fileMeta = new FileMeta();
+		try {
+			Pair<List<String>, List<String>> pair = FileIO.scanDir(inFiles);
+			
+			List<File> files = new ArrayList<>();
+			for (String file : pair.getRight()) {
+				
+			}
+			
+			fileMeta.put("dirs", pair.getLeft());
+			//fileMeta.put("files", p);
+			
+			try (FileWrapper fileWrapper = new FileWrapper(outFile, fileMeta)) {
+				
+				
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (ExceptionInfo e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void unpack(File inFile, File outDir) {

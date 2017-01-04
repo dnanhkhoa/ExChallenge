@@ -60,7 +60,8 @@ public final class Debug {
 			e.printStackTrace();
 		}
 		*/
-		File file = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.zip");
+		File file = new File("FileProtector\\123.zip");
+		System.out.println(file);
 		/*
 		FileMeta fileMeta = new FileMeta();
 		fileMeta.put("Hello", "Khoa Hello Khoa");
@@ -68,7 +69,7 @@ public final class Debug {
 		fileWrapper.write("Dương Nguyễn Anh Khoa".getBytes("UTF-8"));
 		fileWrapper.close();
 		*/
-		FileIO.decompress(file, new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.mkv"));
+		//FileIO.decompress(file, new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.mkv"));
 	}
 
 }
