@@ -9,7 +9,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-public class LoginDialog extends JDialog {
+public class DecryptDialog extends JDialog {
 
 	/**
 	 * Launch the application.
@@ -18,7 +18,7 @@ public class LoginDialog extends JDialog {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LoginDialog dialog = new LoginDialog();
+					DecryptDialog dialog = new DecryptDialog();
 					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 					dialog.setVisible(true);
 				} catch (Exception e) {
@@ -31,7 +31,7 @@ public class LoginDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public LoginDialog() {
+	public DecryptDialog() {
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 14));
 		setTitle("Login");
 		setModal(true);
@@ -40,7 +40,7 @@ public class LoginDialog extends JDialog {
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {},
 			new RowSpec[] {}));
-		
+
 	}
 
 }

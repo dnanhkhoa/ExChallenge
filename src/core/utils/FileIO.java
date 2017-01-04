@@ -19,11 +19,11 @@ import exception.ExceptionInfo;
 
 public final class FileIO {
 
-	public static String hashSHA256File(File file, int blockSize)
-			throws FileNotFoundException, IOException, NoSuchAlgorithmException {
+	private static final int BLOCK_SIZE = 512;
 
+	public static String hashSHA256File(File file) throws FileNotFoundException, IOException, NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		byte[] buffer = new byte[blockSize];
+		byte[] buffer = new byte[FileIO.BLOCK_SIZE];
 		int bytesRead = 0;
 		try (InputStream is = new FileInputStream(file)) {
 			while ((bytesRead = is.read(buffer)) > 0) {
@@ -71,5 +71,37 @@ public final class FileIO {
 			}
 		}
 		return new Pair<List<String>, List<String>>(dirs, files);
+	}
+
+	public static void compress(File inFile, File outFile) {
+
+	}
+
+	public static void decompress(File inFile, File outFile) {
+
+	}
+
+	public static void pack(File inFile, File outFile) {
+
+	}
+
+	public static void unpack(File inFile, File outFile) {
+
+	}
+
+	public static void copyFiles() {
+
+	}
+
+	public static void moveFiles() {
+
+	}
+
+	public static void deleteFiles() {
+
+	}
+
+	public static void renameFile() {
+
 	}
 }
