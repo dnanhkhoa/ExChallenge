@@ -17,21 +17,22 @@ import core.file.algs.symmetric.enums.PaddingModeEnum;
 
 public final class FileHandler {
 
-	private static final String SIGNATURE = "";
+	private static final String SIGNATURE = "ENCRYPTED";
 
 	private BaseAlgo cipher;
-
 	private List<String> paths;
-
 	private boolean isEncrypted;
 
 	public FileHandler() {
 	}
 
-	private void initCipher(boolean encryptMode, AlgoEnum algoEnum, ModeOfOperationEnum modeOfOperation, PaddingModeEnum paddingMode) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException {
-		if(algoEnum == AlgoEnum.AES){
+	private void initCipher(boolean encryptMode, AlgoEnum algoEnum, ModeOfOperationEnum modeOfOperation,
+			PaddingModeEnum paddingMode) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException {
+
+		if (algoEnum == AlgoEnum.AES) {
 			this.cipher = new AES(encryptMode, modeOfOperation, paddingMode);
-		}else{
+		} else {
 			this.cipher = new DES(encryptMode, modeOfOperation, paddingMode);
 		}
 	}
@@ -41,7 +42,9 @@ public final class FileHandler {
 	}
 
 	public void encrypt() {
-
+		// Pack
+		// Zip
+		// Encrypt
 	}
 
 	public void decrypt() {

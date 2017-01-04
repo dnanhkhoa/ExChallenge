@@ -18,6 +18,7 @@ import javax.crypto.NoSuchPaddingException;
 
 import org.apache.commons.io.FileUtils;
 
+import core.file.FileDigitalCertificate;
 import core.file.FileMeta;
 import core.file.FileUnwrapper;
 import core.file.FileWrapper;
@@ -50,11 +51,10 @@ public final class Debug {
 		/*
 		try {
 			KeyPair keyPair = RSA.generateKeyPair(512);
-			RSA rsa = new RSA(keyPair.getPublic(), 512, true);
-			String s = "Khoa";
-			byte[] en = rsa.doFinal(s.getBytes());
+			RSA rsa = new RSA(keyPair.getPrivate(), 512, true);
+			byte[] en = rsa.doFinal(FileIO.hashMD5File(new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\mnist.pkl.gz")).getBytes());
 			System.out.println(new String(en));
-			RSA rsa2 = new RSA(keyPair.getPrivate(), 512, false);
+			RSA rsa2 = new RSA(keyPair.getPublic(), 512, false);
 			byte[] de = rsa2.doFinal(en);
 			System.out.println(new String(de));
 		} catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
@@ -62,6 +62,7 @@ public final class Debug {
 			e.printStackTrace();
 		}
 		*/
+		
 		/*
 		File file = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\src");
 		List<File> files = new ArrayList<>();
@@ -71,10 +72,10 @@ public final class Debug {
 		FileIO.pack(files, outFile);
 		*/
 		
-		
+		/*
 		File f = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.abc");
 		FileIO.unpack(f, new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123456"));
-		
+		*/
 		
 		/*
 		FileMeta fileMeta = new FileMeta();
@@ -84,6 +85,14 @@ public final class Debug {
 		fileWrapper.close();
 		*/
 		//FileIO.decompress(file, new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.mkv"));
+		/*
+		KeyPair keyPair = RSA.generateKeyPair(512);
+		File inFile = new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\mnist.pkl.gz");
+		File cerFile = new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\mnist.pkl.cer");
+		FileDigitalCertificate.sign(inFile, keyPair.getPrivate(), 512, cerFile);
+		
+		System.out.println(FileDigitalCertificate.verify(inFile, keyPair.getPublic(), 512, cerFile));
+		*/
 	}
 
 }

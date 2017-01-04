@@ -1,5 +1,7 @@
 package core.utils;
 
+// Done
+
 public final class Pair<U, V> {
 
 	private U left;

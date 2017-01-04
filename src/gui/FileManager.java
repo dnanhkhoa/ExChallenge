@@ -14,24 +14,25 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 public class FileManager {
 
 	private JFrame frmMain;
-	private JToolBar toolBar;
-	private JButton btnNewButton;
+	private JToolBar tlbHeader;
+	private JButton btnUp;
 	private JScrollPane scrollPane;
-	private JTable table;
-	private JToolBar toolBar_1;
-	private JComboBox comboBox;
+	private JTable tbFiles;
+	private JToolBar tlbFooter;
 	private JLabel lblNewLabel;
-	private JButton btnNewButton_1;
+	private JButton btnEncrypt;
 	private JButton btnDecrypt;
 	private JButton btnSignature;
 	private JButton btnVerify;
 	private JButton btnExport;
-	private JButton btnEdit;
+	private JButton btnEditProfile;
 	private JButton btnLogOut;
+	private JTextField txtPath;
 
 	/**
 	 * Launch the application.
@@ -81,62 +82,60 @@ public class FileManager {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.RELATED_GAP_ROWSPEC,}));
-		this.frmMain.getContentPane().add(getToolBar(), "2, 2, 3, 1");
-		this.frmMain.getContentPane().add(getBtnNewButton(), "2, 4");
-		this.frmMain.getContentPane().add(getComboBox(), "4, 4, fill, default");
+		this.frmMain.getContentPane().add(getTlbHeader(), "2, 2, 3, 1");
+		this.frmMain.getContentPane().add(getBtnUp(), "2, 4");
+		this.frmMain.getContentPane().add(getTxtPath(), "4, 4, fill, default");
 		this.frmMain.getContentPane().add(getScrollPane(), "2, 6, 3, 1, fill, fill");
-		this.frmMain.getContentPane().add(getToolBar_1(), "2, 8, 3, 1");
+		this.frmMain.getContentPane().add(getTlbFooter(), "2, 8, 3, 1");
 	}
 
-	private JToolBar getToolBar() {
-		if (toolBar == null) {
-			toolBar = new JToolBar();
-			toolBar.add(getBtnNewButton_1());
-			toolBar.add(getBtnDecrypt());
-			toolBar.add(getBtnSignature());
-			toolBar.add(getBtnVerify());
-			toolBar.add(getBtnExport());
-			toolBar.add(getBtnEdit());
-			toolBar.add(getBtnLogOut());
+	private JToolBar getTlbHeader() {
+		if (tlbHeader == null) {
+			tlbHeader = new JToolBar();
+			tlbHeader.setFloatable(false);
+			tlbHeader.add(getBtnEncrypt());
+			tlbHeader.add(getBtnDecrypt());
+			tlbHeader.addSeparator();
+			tlbHeader.add(getBtnSignature());
+			tlbHeader.add(getBtnVerify());
+			tlbHeader.addSeparator();
+			tlbHeader.add(getBtnExport());
+			tlbHeader.add(getBtnEditProfile());
+			tlbHeader.addSeparator();
+			tlbHeader.add(getBtnLogOut());
 		}
-		return toolBar;
+		return tlbHeader;
 	}
 
-	private JButton getBtnNewButton() {
-		if (btnNewButton == null) {
-			btnNewButton = new JButton("");
+	private JButton getBtnUp() {
+		if (btnUp == null) {
+			btnUp = new JButton("");
 		}
-		return btnNewButton;
+		return btnUp;
 	}
 
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
-			scrollPane.setViewportView(getTable());
+			scrollPane.setViewportView(getTbFiles());
 		}
 		return scrollPane;
 	}
 
-	private JTable getTable() {
-		if (table == null) {
-			table = new JTable();
+	private JTable getTbFiles() {
+		if (tbFiles == null) {
+			tbFiles = new JTable();
 		}
-		return table;
+		return tbFiles;
 	}
 
-	private JToolBar getToolBar_1() {
-		if (toolBar_1 == null) {
-			toolBar_1 = new JToolBar();
-			toolBar_1.add(getLblNewLabel());
+	private JToolBar getTlbFooter() {
+		if (tlbFooter == null) {
+			tlbFooter = new JToolBar();
+			tlbFooter.setFloatable(false);
+			tlbFooter.add(getLblNewLabel());
 		}
-		return toolBar_1;
-	}
-	private JComboBox getComboBox() {
-		if (comboBox == null) {
-			comboBox = new JComboBox();
-			comboBox.setEditable(true);
-		}
-		return comboBox;
+		return tlbFooter;
 	}
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
@@ -144,11 +143,11 @@ public class FileManager {
 		}
 		return lblNewLabel;
 	}
-	private JButton getBtnNewButton_1() {
-		if (btnNewButton_1 == null) {
-			btnNewButton_1 = new JButton("Encrypt");
+	private JButton getBtnEncrypt() {
+		if (btnEncrypt == null) {
+			btnEncrypt = new JButton("Encrypt");
 		}
-		return btnNewButton_1;
+		return btnEncrypt;
 	}
 	private JButton getBtnDecrypt() {
 		if (btnDecrypt == null) {
@@ -174,16 +173,23 @@ public class FileManager {
 		}
 		return btnExport;
 	}
-	private JButton getBtnEdit() {
-		if (btnEdit == null) {
-			btnEdit = new JButton("Edit");
+	private JButton getBtnEditProfile() {
+		if (btnEditProfile == null) {
+			btnEditProfile = new JButton("Edit profile");
 		}
-		return btnEdit;
+		return btnEditProfile;
 	}
 	private JButton getBtnLogOut() {
 		if (btnLogOut == null) {
 			btnLogOut = new JButton("Log out");
 		}
 		return btnLogOut;
+	}
+	private JTextField getTxtPath() {
+		if (txtPath == null) {
+			txtPath = new JTextField();
+			txtPath.setColumns(10);
+		}
+		return txtPath;
 	}
 }

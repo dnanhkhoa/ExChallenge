@@ -5,7 +5,6 @@ public final class CoreHandler {
 	private static CoreHandler _instance;
 
 	private CoreHandler() {
-		
 	}
 
 	public static synchronized CoreHandler getInstance() {

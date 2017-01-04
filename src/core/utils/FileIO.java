@@ -31,9 +31,8 @@ public final class FileIO {
 	private static final int BLOCK_SIZE = 512;
 
 	// Done
-	public static String hashSHA256File(String file)
-			throws FileNotFoundException, IOException, NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
+	public static String hashMD5File(File file) throws FileNotFoundException, IOException, NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("MD5");
 		byte[] buffer = new byte[FileIO.BLOCK_SIZE];
 		int bytesRead = 0;
 		try (InputStream is = new FileInputStream(file)) {
@@ -156,6 +155,7 @@ public final class FileIO {
 	}
 
 	// Done
+	@SuppressWarnings("unchecked")
 	public static void unpack(File inFile, File outDir) throws ClassNotFoundException, ExceptionInfo, Exception {
 		if (!outDir.isDirectory()) {
 			throw new ExceptionInfo("Output path must be a directory!");
