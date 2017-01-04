@@ -5,7 +5,7 @@ import javax.crypto.IllegalBlockSizeException;
 
 public class BaseAlgo {
 
-	private static final int DEFAULT_BLOCK_SIZE = 512;
+	protected static final int DEFAULT_BLOCK_SIZE = 512;
 
 	public BaseAlgo() {
 	}
@@ -14,7 +14,7 @@ public class BaseAlgo {
 		return DEFAULT_BLOCK_SIZE;
 	}
 
-	public int encryptedBlockSize() {
+	public int outputBlockSize(int blockSize) {
 		return DEFAULT_BLOCK_SIZE;
 	}
 

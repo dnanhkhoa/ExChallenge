@@ -38,11 +38,11 @@ public class RSA extends BaseAlgo {
 
 	@Override
 	public int blockSize() {
-		return this.encryptedBlockSize() - 11; // 11 bytes paddings
+		return this.outputBlockSize(this.KEY_SIZE) - 11; // 11 bytes paddings
 	}
 
 	@Override
-	public int encryptedBlockSize() {
+	public int outputBlockSize(int blockSize) {
 		return this.KEY_SIZE / 8;
 	}
 

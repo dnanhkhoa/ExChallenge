@@ -7,10 +7,19 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.FormSpecs;
+import javax.swing.JToolBar;
+import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class FileExplorer {
 
 	private JFrame frmExchallenge;
+	private final JToolBar toolBar = new JToolBar();
+	private final JTextField textField = new JTextField();
+	private final JScrollPane scrollPane = new JScrollPane();
+	private final JTable table = new JTable();
+	private final JToolBar toolBar_1 = new JToolBar();
 
 	/**
 	 * Launch the application.
@@ -46,11 +55,30 @@ public class FileExplorer {
 		this.frmExchallenge.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.RELATED_GAP_COLSPEC,
 				FormSpecs.DEFAULT_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("default:grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,},
 			new RowSpec[] {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.RELATED_GAP_ROWSPEC,}));
+		
+		this.frmExchallenge.getContentPane().add(this.toolBar, "2, 2, 3, 1");
+		this.textField.setColumns(10);
+		
+		this.frmExchallenge.getContentPane().add(this.textField, "4, 4, fill, default");
+		
+		this.frmExchallenge.getContentPane().add(this.scrollPane, "2, 6, 3, 1, fill, fill");
+		
+		this.scrollPane.setViewportView(this.table);
+		
+		this.frmExchallenge.getContentPane().add(this.toolBar_1, "2, 8, 3, 1");
 	}
 
 }
