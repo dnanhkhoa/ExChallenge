@@ -3,14 +3,19 @@ package core.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -21,6 +26,7 @@ public final class FileIO {
 
 	private static final int BLOCK_SIZE = 512;
 
+	// Done
 	public static String hashSHA256File(String file)
 			throws FileNotFoundException, IOException, NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -34,6 +40,7 @@ public final class FileIO {
 		return StringUtils.byteToHex(md.digest());
 	}
 
+	// Done
 	public static Pair<List<String>, List<String>> scanDir(File dirPath) throws ExceptionInfo {
 		if (!dirPath.isDirectory()) {
 			throw new ExceptionInfo("Path must be a valid directory!");
@@ -59,6 +66,7 @@ public final class FileIO {
 		return new Pair<List<String>, List<String>>(dirs, files);
 	}
 
+	// Done
 	public static Pair<List<String>, List<String>> scanDir(List<File> paths) throws ExceptionInfo {
 		List<String> files = new ArrayList<>();
 		List<String> dirs = new ArrayList<>();
@@ -74,12 +82,45 @@ public final class FileIO {
 		return new Pair<List<String>, List<String>>(dirs, files);
 	}
 
-	public static void compress(File inFile, File outFile) {
+	// Done
+	public static void compress(File inFile, File outFile) throws FileNotFoundException, IOException {
+		try (InputStream inputStream = new FileInputStream(inFile)) {
+			try (OutputStream outputStream = new FileOutputStream(outFile)) {
+				try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
 
+					ZipEntry zipEntry = new ZipEntry(inFile.getName());
+
+					zipOutputStream.putNextEntry(zipEntry);
+
+					byte[] buffer = new byte[FileIO.BLOCK_SIZE];
+					int bytesRead = 0;
+					while ((bytesRead = inputStream.read(buffer)) > 0) {
+						zipOutputStream.write(buffer, 0, bytesRead);
+					}
+
+					zipOutputStream.closeEntry();
+				}
+			}
+		}
 	}
 
-	public static void decompress(File inFile, File outFile) {
+	// Done
+	public static void decompress(File inFile, File outFile) throws FileNotFoundException, IOException {
+		try (InputStream inputStream = new FileInputStream(inFile)) {
+			try (ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
+				try (OutputStream outputStream = new FileOutputStream(outFile)) {
+					zipInputStream.getNextEntry();
 
+					byte[] buffer = new byte[FileIO.BLOCK_SIZE];
+					int bytesRead = 0;
+					while ((bytesRead = zipInputStream.read(buffer)) > 0) {
+						outputStream.write(buffer, 0, bytesRead);
+					}
+
+					zipInputStream.closeEntry();
+				}
+			}
+		}
 	}
 
 	public static void pack(String baseDir, List<String> inFiles, File outFile) {

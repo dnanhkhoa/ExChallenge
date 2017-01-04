@@ -9,6 +9,8 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -58,7 +60,7 @@ public final class Debug {
 			e.printStackTrace();
 		}
 		*/
-		File file = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\README123.txt");
+		File file = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.zip");
 		/*
 		FileMeta fileMeta = new FileMeta();
 		fileMeta.put("Hello", "Khoa Hello Khoa");
@@ -66,12 +68,7 @@ public final class Debug {
 		fileWrapper.write("Dương Nguyễn Anh Khoa".getBytes("UTF-8"));
 		fileWrapper.close();
 		*/
-		byte[] s = new byte[200];
-		FileUnwrapper fileUnwrapper = new FileUnwrapper(file);
-		System.out.println(fileUnwrapper.readFileMeta().get("Hello"));
-		fileUnwrapper.read(s);
-		System.out.println(new String(s));
-		fileUnwrapper.close();
+		FileIO.decompress(file, new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.mkv"));
 	}
 
 }

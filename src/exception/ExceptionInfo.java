@@ -1,5 +1,7 @@
 package exception;
 
+// Done
+
 public final class ExceptionInfo extends Exception {
 
 	private static final long serialVersionUID = 1L;
