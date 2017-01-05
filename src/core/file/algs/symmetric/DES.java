@@ -67,10 +67,12 @@ public class DES extends BaseAlgo {
 				new IvParameterSpec(this.IV));
 	}
 
+	@Override
 	public Key getKey() {
 		return this.KEY;
 	}
 
+	@Override
 	public byte[] getIV() {
 		return this.IV;
 	}

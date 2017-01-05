@@ -4,6 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.file.FileHandler;
+import core.file.algs.symmetric.AES;
+import core.file.algs.symmetric.enums.AlgoEnum;
+import core.file.algs.symmetric.enums.ModeOfOperationEnum;
+import core.file.algs.symmetric.enums.PaddingModeEnum;
+import core.user.User;
 import core.utils.FileIO;
 
 public final class Debug {
@@ -49,10 +55,10 @@ public final class Debug {
 		FileIO.pack(files, outFile, null);
 		*/
 		
-		
+		/*
 		File f = new File("C:\\Users\\Anh Khoa\\Desktop\\123.abc");
 		FileIO.unpack(f, new File("C:\\Users\\Anh Khoa\\Desktop\\Khoa"), null);
-		
+		*/
 		
 		/*
 		FileMeta fileMeta = new FileMeta();
@@ -83,5 +89,25 @@ public final class Debug {
 		RSA rsa2 = new RSA(privateKey, user.getKeySize(), false);
 		System.out.println(new String(rsa2.doFinal(r1)));
 		*/
+		
+
+		
+		
+		List<File> fs = new ArrayList<>();
+		File f = new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\mnist.pkl.gz");
+		File f1 = new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\mnist123.enc");
+		File f2 = new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\a");
+		fs.add(f);
+		
+		FileHandler fileHandler = new FileHandler(fs, AlgoEnum.AES, ModeOfOperationEnum.CBC, PaddingModeEnum.ISO10126Padding, true);
+		
+		User user = new User("abc", "123", "khoa", "123", "123", "123", 512);
+		fileHandler.encrypt(f1, user);
+		
+		fs.clear();
+		fs.add(f1);
+		fileHandler = new FileHandler(fs);
+		fileHandler.decrypt(f2, user, "123");
+		
 	}
 }
