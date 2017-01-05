@@ -104,26 +104,5 @@ public final class Debug {
 		fileHandler = new FileHandler(fs);
 		fileHandler.decrypt(f2, user, "123");
 		*/
-		FileAlterationObserver observer = new FileAlterationObserver("D:\\Projects\\Java\\ExChallenge");
-		FileAlterationMonitor monitor = new FileAlterationMonitor(1000);
-		FileAlterationListener listener = new FileAlterationListenerAdaptor() {
-		    @Override
-		    public void onFileCreate(File file) {
-		        System.out.println("Create");
-		    }
-		 
-		    @Override
-		    public void onFileDelete(File file) {
-		    	System.out.println("Delete");
-		    }
-		 
-		    @Override
-		    public void onFileChange(File file) {
-		    	System.out.println("Change");
-		    }
-		};
-		observer.addListener(listener);
-		monitor.addObserver(observer);
-		monitor.start();
 	}
 }

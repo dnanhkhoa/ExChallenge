@@ -47,12 +47,15 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 import core.file.FileDigitalCertificate;
+import core.file.FileHandler;
 import core.handler.CoreHandler;
 import core.model.FileModel;
 import core.model.JLabelRenderer;
 import core.model.TableModel;
 import core.user.User;
+import gui.user.DecryptDialog;
 import gui.user.EditDialog;
+import gui.user.EncryptDialog;
 import gui.user.LoginDialog;
 
 public class FileManager {
@@ -128,7 +131,7 @@ public class FileManager {
 
 		this.currentPath = new File("").getAbsoluteFile();
 
-		this.monitor = new FileAlterationMonitor(1000);
+		this.monitor = new FileAlterationMonitor(1500);
 		this.listener = new FileAlterationListenerAdaptor() {
 			@Override
 			public void onFileCreate(File file) {
@@ -229,6 +232,7 @@ public class FileManager {
 					do_btnUp_actionPerformed(arg0);
 				}
 			});
+
 			btnUp.setContentAreaFilled(false);
 			btnUp.setFocusable(false);
 
@@ -404,6 +408,7 @@ public class FileManager {
 					do_btnEncrypt_actionPerformed(e);
 				}
 			});
+
 			btnEncrypt.setHorizontalTextPosition(SwingConstants.CENTER);
 			btnEncrypt.setVerticalTextPosition(SwingConstants.BOTTOM);
 			btnEncrypt.setFocusable(false);
@@ -426,6 +431,7 @@ public class FileManager {
 					do_btnDecrypt_actionPerformed(e);
 				}
 			});
+
 			btnDecrypt.setHorizontalTextPosition(SwingConstants.CENTER);
 			btnDecrypt.setVerticalTextPosition(SwingConstants.BOTTOM);
 			btnDecrypt.setFocusable(false);
@@ -558,9 +564,49 @@ public class FileManager {
 	}
 
 	protected void do_btnEncrypt_actionPerformed(ActionEvent e) {
+		if (this.tbFiles.getSelectedRowCount() == 0) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select files!");
+			return;
+		}
+
+		EncryptDialog dialog = new EncryptDialog();
+
+		int[] indices = this.tbFiles.getSelectedRows();
+		for (int i : indices) {
+			if (this.tableModel.fileModels.get(i).isBack())
+				continue;
+			dialog.files.add(new File(this.tableModel.fileModels.get(i).getPath()));
+		}
+
+		dialog.currentPath = this.currentPath;
+		dialog.setLocationRelativeTo(this.frmMain);
+		dialog.setVisible(true);
 	}
 
 	protected void do_btnDecrypt_actionPerformed(ActionEvent e) {
+		if (this.tbFiles.getSelectedRowCount() != 1) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select a file!");
+			return;
+		}
+
+		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
+		File file = new File(fileModel.getPath());
+
+		if (file.isFile()) {
+			if (FileHandler.isEncryptedFile(file)) {
+
+				DecryptDialog dialog = new DecryptDialog();
+				dialog.file = file;
+				dialog.currentPath = this.currentPath;
+				dialog.setLocationRelativeTo(this.frmMain);
+				dialog.setVisible(true);
+
+			} else {
+				JOptionPane.showMessageDialog(this.frmMain, "Can not decrypt this file!");
+			}
+		} else {
+			JOptionPane.showMessageDialog(this.frmMain, "This is not file!");
+		}
 	}
 
 	protected void do_btnSignature_actionPerformed(ActionEvent e) {
@@ -634,6 +680,11 @@ public class FileManager {
 			file = new File(fileModel.getPath());
 		}
 
+		if (!file.isFile()) {
+			JOptionPane.showMessageDialog(this.frmMain, "This is not file!");
+			return;
+		}
+
 		for (User user : CoreHandler.getInstance().userManager.getUsers()) {
 			try {
 				if (FileDigitalCertificate.verify(file, user.getPublicKey(), user.getKeySize(), cerFile)) {
@@ -666,13 +717,11 @@ public class FileManager {
 
 	protected void do_btnEditProfile_actionPerformed(ActionEvent e) {
 		if (CoreHandler.getInstance().currentUser != null) {
-			this.frmMain.setVisible(false);
 
 			JDialog dialog = new EditDialog();
 			dialog.setLocationRelativeTo(this.frmMain);
 			dialog.setVisible(true);
 
-			this.frmMain.setVisible(true);
 			this.isLogged();
 		}
 	}
@@ -696,7 +745,7 @@ public class FileManager {
 		}
 	}
 
-	protected void browseFiles(File file) {
+	protected synchronized void browseFiles(File file) {
 		if (!this.currentPath.exists()) {
 			this.currentPath = new File("").getAbsoluteFile();
 		}
@@ -752,8 +801,10 @@ public class FileManager {
 	}
 
 	protected void do_mnuCut_actionPerformed(ActionEvent arg0) {
-		if (this.tbFiles.getSelectedRow() == -1)
+		if (this.tbFiles.getSelectedRowCount() == 0) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select files!");
 			return;
+		}
 
 		CoreHandler.getInstance().fileBuffer.clear();
 
@@ -767,6 +818,11 @@ public class FileManager {
 	}
 
 	protected void do_mnuCopy_actionPerformed(ActionEvent e) {
+		if (this.tbFiles.getSelectedRowCount() == 0) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select files!");
+			return;
+		}
+
 		CoreHandler.getInstance().fileBuffer.clear();
 
 		int[] indices = this.tbFiles.getSelectedRows();
@@ -819,8 +875,10 @@ public class FileManager {
 	}
 
 	protected void do_mnuRename_actionPerformed(ActionEvent e) {
-		if (this.tbFiles.getSelectedRow() == -1)
+		if (this.tbFiles.getSelectedRowCount() != 1) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select a file!");
 			return;
+		}
 
 		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
 		File file = new File(fileModel.getPath());
@@ -855,8 +913,10 @@ public class FileManager {
 	}
 
 	protected void do_mnuDelete_actionPerformed(ActionEvent e) {
-		if (this.tbFiles.getSelectedRow() == -1)
+		if (this.tbFiles.getSelectedRowCount() != 1) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select a file!");
 			return;
+		}
 
 		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
 		File file = new File(fileModel.getPath());
