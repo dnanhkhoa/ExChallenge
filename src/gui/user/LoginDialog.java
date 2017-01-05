@@ -5,11 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -167,6 +170,45 @@ public class LoginDialog extends JDialog {
 	}
 
 	protected void do_btnImport_actionPerformed(ActionEvent e) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Import profile");
+		fileChooser.setCurrentDirectory(new java.io.File("."));
+		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			File inFile = fileChooser.getSelectedFile();
+			if (!inFile.isFile()) {
+				JOptionPane.showMessageDialog(this, "Profile file does not exist!");
+				return;
+			}
+			User user = User.load(inFile);
+			if (user == null) {
+				JOptionPane.showMessageDialog(this, "Profile file is corrupt!");
+			} else {
+				User otherUser = CoreHandler.getInstance().userManager.findUserByEmail(user.getEmail());
+				if (otherUser != null) {
+
+					JPanel panel = new JPanel();
+					JLabel label = new JLabel("Enter a password to confirm:");
+					JPasswordField pass = new JPasswordField(10);
+					panel.add(label);
+					panel.add(pass);
+					String[] options = new String[] { "OK", "Cancel" };
+					int option = JOptionPane.showOptionDialog(null, panel, "Input password", JOptionPane.NO_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
+
+					if (option != 0)
+						return;
+
+					String password = new String(pass.getPassword());
+					if (!otherUser.confirmPassword(password)) {
+						JOptionPane.showMessageDialog(this, "Password is wrong!");
+						return;
+					}
+					CoreHandler.getInstance().userManager.remove(otherUser);
+				}
+				CoreHandler.getInstance().userManager.add(user);
+				JOptionPane.showMessageDialog(this, "Done!");
+			}
+		}
 	}
 
 	protected void do_this_windowClosing(WindowEvent arg0) {

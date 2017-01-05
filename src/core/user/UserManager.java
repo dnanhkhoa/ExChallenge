@@ -30,6 +30,10 @@ public final class UserManager implements Serializable {
 		users.add(user);
 	}
 
+	public void remove(User user) {
+		users.remove(user);
+	}
+
 	public User findUserByEmail(String email) {
 		for (int i = 0; i < users.size(); i++) {
 			if (users.get(i).getEmail().equals(email)) {
