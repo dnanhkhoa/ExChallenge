@@ -292,26 +292,4 @@ public final class FileIO {
 			}
 		}
 	}
-
-	public static void copyFiles(List<File> inFiles, File outDir) {
-		for (File file : inFiles) {
-
-		}
-	}
-
-	public static void moveFiles(List<File> inFiles, File outDir) {
-		for (File file : inFiles) {
-
-		}
-	}
-
-	public static void deleteFiles(List<File> inFiles) {
-		for (File file : inFiles) {
-
-		}
-	}
-
-	public static void renameFile(File oldName, File newName) {
-
-	}
 }

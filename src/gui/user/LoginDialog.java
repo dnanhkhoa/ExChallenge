@@ -46,6 +46,7 @@ public class LoginDialog extends JDialog {
 				do_this_windowClosing(arg0);
 			}
 		});
+		
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setResizable(false);
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 14));

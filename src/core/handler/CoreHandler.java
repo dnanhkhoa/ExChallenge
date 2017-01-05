@@ -7,6 +7,8 @@ import java.util.List;
 import core.user.User;
 import core.user.UserManager;
 
+// Done
+
 public final class CoreHandler {
 
 	private static CoreHandler _instance;

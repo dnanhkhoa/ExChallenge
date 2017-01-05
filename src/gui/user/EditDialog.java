@@ -51,6 +51,7 @@ public class EditDialog extends JDialog {
 		setFont(new Font("Dialog", Font.PLAIN, 14));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
+		
 		getContentPane().setLayout(new FormLayout(
 				new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
 						FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow(2)"),
@@ -61,6 +62,7 @@ public class EditDialog extends JDialog {
 						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
 						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
 						RowSpec.decode("7dlu:grow"), FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC, }));
+		
 		getContentPane().add(getLblEmail(), "2, 2, right, default");
 		getContentPane().add(getTxtEmail(), "4, 2, fill, default");
 		getContentPane().add(getLblPassword(), "2, 4, right, default");
