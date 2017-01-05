@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -31,6 +32,7 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 import core.handler.CoreHandler;
+import core.model.FileModel;
 import core.model.JLabelRenderer;
 import core.model.TableModel;
 
@@ -68,6 +70,8 @@ public class FileManager {
 	private JMenuItem mnuRename;
 	private JMenuItem mnuDelete;
 
+	private File currentPath;
+
 	/**
 	 * Launch the application.
 	 */
@@ -100,7 +104,11 @@ public class FileManager {
 
 	private void initializeVariables() {
 		CoreHandler.getInstance();
+
+		this.currentPath = new File("").getAbsoluteFile();
+
 		this.tableModel = new TableModel();
+		this.browseFiles(this.currentPath);
 	}
 
 	/**
@@ -222,7 +230,7 @@ public class FileManager {
 		return popupMenu;
 	}
 
-	private static void addPopup(Component component, final JPopupMenu popup) {
+	private void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger()) {
@@ -238,6 +246,11 @@ public class FileManager {
 
 			private void showMenu(MouseEvent e) {
 				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				do_tbFiles_mouseClicked(arg0);
 			}
 		});
 	}
@@ -412,35 +425,32 @@ public class FileManager {
 	}
 
 	protected void do_btnUp_actionPerformed(ActionEvent arg0) {
-
+		this.browserBack();
 	}
 
-	protected static void do_txtPath_actionPerformed(ActionEvent e) {
+	protected void do_txtPath_actionPerformed(ActionEvent e) {
+		this.browseFiles(new File(this.getTxtPath().getText()));
 	}
 
-	private void browseFiles(String path) {
-
+	protected void do_btnEncrypt_actionPerformed(ActionEvent e) {
 	}
 
-	protected static void do_btnEncrypt_actionPerformed(ActionEvent e) {
+	protected void do_btnDecrypt_actionPerformed(ActionEvent e) {
 	}
 
-	protected static void do_btnDecrypt_actionPerformed(ActionEvent e) {
+	protected void do_btnSignature_actionPerformed(ActionEvent e) {
 	}
 
-	protected static void do_btnSignature_actionPerformed(ActionEvent e) {
+	protected void do_btnVerify_actionPerformed(ActionEvent e) {
 	}
 
-	protected static void do_btnVerify_actionPerformed(ActionEvent e) {
+	protected void do_btnExport_actionPerformed(ActionEvent e) {
 	}
 
-	protected static void do_btnExport_actionPerformed(ActionEvent e) {
+	protected void do_btnEditProfile_actionPerformed(ActionEvent e) {
 	}
 
-	protected static void do_btnEditProfile_actionPerformed(ActionEvent e) {
-	}
-
-	protected static void do_btnLogOut_actionPerformed(ActionEvent e) {
+	protected void do_btnLogOut_actionPerformed(ActionEvent e) {
 	}
 
 	private JMenuItem getMnuEncrypt() {
@@ -505,5 +515,35 @@ public class FileManager {
 			mnuDelete = new JMenuItem("Delete");
 		}
 		return mnuDelete;
+	}
+
+	protected void do_tbFiles_mouseClicked(MouseEvent me) {
+		if (me.getClickCount() == 2) {
+			FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
+			if (fileModel.isBack()) {
+				this.browserBack();
+				return;
+			}
+			File file = new File(fileModel.getPath());
+			if (file.isDirectory()) {
+				this.browseFiles(file);
+			}
+		}
+	}
+
+	private void browseFiles(File file) {
+		if (!file.isDirectory()) {
+			this.getTxtPath().setText(this.currentPath.getPath());
+			return;
+		}
+		this.tableModel.browse(file);
+		this.currentPath = file;
+		this.getTxtPath().setText(this.currentPath.getPath());
+	}
+
+	private void browserBack() {
+		if (this.currentPath.getParentFile() != null) {
+			this.browseFiles(this.currentPath.getParentFile());
+		}
 	}
 }
