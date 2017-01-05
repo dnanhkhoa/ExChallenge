@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
@@ -29,6 +30,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import core.file.FileDigitalCertificate;
 import core.handler.CoreHandler;
 import core.model.FileModel;
 import core.model.JLabelRenderer;
@@ -110,6 +112,7 @@ public class FileManager {
 		this.frmMain.setLocationRelativeTo(null);
 		this.frmMain.setTitle("ExChallenge");
 		this.frmMain.setBounds(100, 100, 850, 600);
+		this.frmMain.setMinimumSize(new Dimension(850, 600));
 		this.frmMain.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.frmMain.getContentPane()
 				.setLayout(new FormLayout(new ColumnSpec[] {
@@ -398,6 +401,12 @@ public class FileManager {
 	}
 
 	protected void do_btnSignature_actionPerformed(ActionEvent e) {
+		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
+		File file = new File(fileModel.getPath());
+		if (file.isFile()) {
+			
+			//FileDigitalCertificate.sign(file, key, keySize, cerFile);
+		}
 	}
 
 	protected void do_btnVerify_actionPerformed(ActionEvent e) {
