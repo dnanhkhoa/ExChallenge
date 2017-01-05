@@ -152,4 +152,9 @@ public final class User implements Serializable {
 	public boolean equals(Object obj) {
 		return this.email.equals(((User) obj).getEmail());
 	}
+
+	@Override
+	public String toString() {
+		return String.format("User: %s [%s]", this.email, this.name);
+	}
 }

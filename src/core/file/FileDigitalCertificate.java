@@ -20,6 +20,8 @@ import core.utils.FileIO;
 
 public final class FileDigitalCertificate {
 
+	private static final String SIGNATURE = "-@CER@-";
+
 	public static void sign(File inFile, Key key, int keySize, File cerFile)
 			throws FileNotFoundException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException,
 			BadPaddingException, InvalidKeyException, NoSuchPaddingException {
@@ -27,6 +29,7 @@ public final class FileDigitalCertificate {
 		String hash = FileIO.hashMD5File(inFile);
 		RSA rsa = new RSA(key, keySize, true);
 		try (FileOutputStream fileOutputStream = new FileOutputStream(cerFile)) {
+			fileOutputStream.write(FileDigitalCertificate.SIGNATURE.getBytes());
 			fileOutputStream.write(rsa.doFinal(hash.getBytes()));
 		}
 	}
@@ -41,12 +44,17 @@ public final class FileDigitalCertificate {
 
 		String hashTemp = null;
 		try (FileInputStream fileInputStream = new FileInputStream(cerFile)) {
-			byte[] buffer = new byte[(int) cerFile.length()];
+			byte[] headerData = new byte[FileDigitalCertificate.SIGNATURE.length()];
+			if (fileInputStream.read(headerData) != headerData.length || !SIGNATURE.equals(new String(headerData))) {
+				return false;
+			}
+
+			byte[] buffer = new byte[(int) cerFile.length() - FileDigitalCertificate.SIGNATURE.length()];
 			if (fileInputStream.read(buffer) == buffer.length) {
 				byte[] decrypted = rsa.doFinal(buffer);
 				hashTemp = new String(decrypted);
 			}
 		}
-		return hash.contentEquals(hashTemp);
+		return hashTemp != null && hash.contentEquals(hashTemp);
 	}
 }

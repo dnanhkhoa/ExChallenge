@@ -2,8 +2,13 @@ package gui;
 
 import java.io.File;
 import java.security.Key;
+import java.security.KeyPair;
 
+import javax.swing.filechooser.FileSystemView;
+
+import core.file.FileDigitalCertificate;
 import core.file.algs.asymmetric.RSA;
+import core.model.FileModel;
 import core.user.User;
 import core.user.UserManager;
 
@@ -87,5 +92,4 @@ public final class Debug {
 		System.out.println(new String(rsa2.doFinal(r1)));
 		*/
 	}
-
 }
