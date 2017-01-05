@@ -15,8 +15,10 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -411,6 +413,18 @@ public class FileManager {
 	}
 
 	protected void do_btnExport_actionPerformed(ActionEvent e) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Export profile");
+		fileChooser.setCurrentDirectory(new java.io.File("."));
+		fileChooser.setSelectedFile(new File("profile.bin"));
+		if (fileChooser.showSaveDialog(this.frmMain) == JFileChooser.APPROVE_OPTION) {
+			File outFile = fileChooser.getSelectedFile();
+			try {
+				CoreHandler.getInstance().currentUser.save(outFile);
+			} catch (IOException ex) {
+				JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
+			}
+		}
 	}
 
 	protected void do_btnEditProfile_actionPerformed(ActionEvent e) {

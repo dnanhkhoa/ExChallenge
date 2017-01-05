@@ -160,6 +160,9 @@ public class LoginDialog extends JDialog {
 		JDialog dialog = new RegisterDialog();
 		dialog.setLocationRelativeTo(this);
 		dialog.setVisible(true);
+
+		this.getTxtUserName().setText("");
+		this.getTxtPassword().setText("");
 		this.setVisible(true);
 	}
 
