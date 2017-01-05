@@ -124,6 +124,10 @@ public final class User implements Serializable {
 		return salt;
 	}
 
+	public boolean confirmPassword(String password) {
+		return this.password.equals(PasswordUtils.hashPassword(password, this.salt));
+	}
+
 	public void save(File outFile) throws FileNotFoundException, IOException {
 		try (FileOutputStream fileOutputStream = new FileOutputStream(outFile)) {
 			try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {

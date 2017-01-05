@@ -1,10 +1,21 @@
 package core.user;
 
-import java.security.Key;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class UserManager {
+// Done
+
+public final class UserManager implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private List<User> users;
 
@@ -12,16 +23,12 @@ public final class UserManager {
 		this.users = new ArrayList<>();
 	}
 
-	public void add(User user) {
-		users.add(user);
+	public List<User> getUsers() {
+		return this.users;
 	}
 
-	public void remove(String email) {
-		for (int i = 0; i < users.size(); i++) {
-			if (users.get(i).getEmail().equals(email)) {
-				users.remove(i);
-			}
-		}
+	public void add(User user) {
+		users.add(user);
 	}
 
 	public User findUserByEmail(String email) {
@@ -33,31 +40,30 @@ public final class UserManager {
 		return null;
 	}
 
-	public User findUserByPublicKey(Key publicKey) {
-		for (int i = 0; i < users.size(); i++) {
-			// if(users.get(i).getPublicKey().equals(publicKey)){
-			// return users.get(i);
-			// }
+	public User login(String email, String password) {
+		User user = this.findUserByEmail(email);
+		if (user == null || !user.confirmPassword(password))
+			return null;
+		return user;
+	}
+
+	public static UserManager load(File inFile) {
+		UserManager userManager = null;
+		try (FileInputStream fileInputStream = new FileInputStream(inFile)) {
+			try (ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+				userManager = (UserManager) objectInputStream.readObject();
+			}
+		} catch (Exception ex) {
+			userManager = null;
 		}
-		return null;
+		return userManager;
 	}
 
-	public static UserManager load(String filePath) {
-		return null;
-	}
-
-	public void store(String filePath) {
-
-	}
-
-	public User checkLogin(String email, String password) {
-		for (int i = 0; i < users.size(); i++) {
-			if (users.get(i).getEmail().equals(email)) {
-				if (users.get(i).getPassword().equals(password))
-					return users.get(i);
+	public void save(File outFile) throws FileNotFoundException, IOException {
+		try (FileOutputStream fileOutputStream = new FileOutputStream(outFile)) {
+			try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+				objectOutputStream.writeObject(this);
 			}
 		}
-		return null;
 	}
-
 }

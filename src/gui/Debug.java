@@ -5,6 +5,7 @@ import java.security.Key;
 
 import core.file.algs.asymmetric.RSA;
 import core.user.User;
+import core.user.UserManager;
 
 public final class Debug {
 
@@ -72,7 +73,6 @@ public final class Debug {
 		
 		System.out.println(FileDigitalCertificate.verify(inFile, keyPair.getPublic(), 512, cerFile));
 		*/
-		// User user = new User("dnanhkhoa@live.com", "123456", "Khoa", "09-01-1995", "0946080395", "District 1", 512);
 		//user.save(new File("Hello.cfg"));
 		/*
 		User user = User.load(new File("Hello.cfg"));
