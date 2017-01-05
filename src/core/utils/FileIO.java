@@ -233,11 +233,11 @@ public final class FileIO {
 	@SuppressWarnings("unchecked")
 	public static void unpack(File inFile, File outDir, ObservableModel observableModel)
 			throws ClassNotFoundException, ExceptionInfo, Exception {
-		
+
 		if (!outDir.exists()) {
 			outDir.mkdirs();
 		}
-		
+
 		if (!outDir.isDirectory()) {
 			throw new ExceptionInfo("Output path must be a directory!");
 		}
@@ -295,19 +295,19 @@ public final class FileIO {
 
 	public static void copyFiles(List<File> inFiles, File outDir) {
 		for (File file : inFiles) {
-			
+
 		}
 	}
 
 	public static void moveFiles(List<File> inFiles, File outDir) {
 		for (File file : inFiles) {
-			
+
 		}
 	}
 
 	public static void deleteFiles(List<File> inFiles) {
 		for (File file : inFiles) {
-			
+
 		}
 	}
 

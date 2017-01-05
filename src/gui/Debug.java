@@ -92,7 +92,7 @@ public final class Debug {
 		
 
 		
-		
+		/*
 		List<File> fs = new ArrayList<>();
 		File f = new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\mnist.pkl.gz");
 		File f1 = new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc\\mnist123.enc");
@@ -108,6 +108,7 @@ public final class Debug {
 		fs.add(f1);
 		fileHandler = new FileHandler(fs);
 		fileHandler.decrypt(f2, user, "123");
+		*/
 		
 	}
 }
