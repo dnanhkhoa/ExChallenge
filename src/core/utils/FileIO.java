@@ -182,19 +182,19 @@ public final class FileIO {
 		}
 	}
 
-	public static void copyFiles() {
+	public static void copyFiles(List<File> inFiles, File outDir) {
+		
+	}
+
+	public static void moveFiles(List<File> inFiles, File outDir) {
 
 	}
 
-	public static void moveFiles() {
+	public static void deleteFiles(List<File> inFiles) {
 
 	}
 
-	public static void deleteFiles() {
-
-	}
-
-	public static void renameFile() {
-
+	public static void renameFile(File oldName, File newName) {
+		
 	}
 }

@@ -20,9 +20,19 @@ public final class PasswordUtils {
 
 	public static String hashPassword(String password, byte[] salt) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(salt);
 			return StringUtils.byteToHex(md.digest(password.getBytes()));
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static byte[] md5(String message) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			return md.digest(message.getBytes());
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

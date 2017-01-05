@@ -29,7 +29,7 @@ public class DES extends BaseAlgo {
 	public DES(boolean encryptMode, ModeOfOperationEnum modeOfOperation, PaddingModeEnum paddingMode)
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidAlgorithmParameterException {
-		this(null, null, encryptMode, modeOfOperation, paddingMode);
+		this((Key) null, null, encryptMode, modeOfOperation, paddingMode);
 	}
 
 	public DES(Key key, byte[] iv, boolean encryptMode, ModeOfOperationEnum modeOfOperation,
@@ -49,6 +49,22 @@ public class DES extends BaseAlgo {
 
 		this.KEY = key;
 		this.IV = iv;
+	}
+
+	public DES(byte[] password, byte[] iv, boolean encryptMode, ModeOfOperationEnum modeOfOperation,
+			PaddingModeEnum paddingMode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+			InvalidAlgorithmParameterException {
+		this.CIPHER = Cipher.getInstance(String.format("%s/%s/%s", DES.ALGORITHM, modeOfOperation, paddingMode));
+
+		if (iv == null) {
+			iv = PasswordUtils.getRandomByte(this.CIPHER.getBlockSize());
+		}
+
+		this.KEY = new SecretKeySpec(password, DES.ALGORITHM);
+		this.IV = iv;
+
+		this.CIPHER.init(encryptMode ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, this.KEY,
+				new IvParameterSpec(this.IV));
 	}
 
 	public Key getKey() {

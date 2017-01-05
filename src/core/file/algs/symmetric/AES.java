@@ -29,7 +29,7 @@ public class AES extends BaseAlgo {
 	public AES(boolean encryptMode, ModeOfOperationEnum modeOfOperation, PaddingModeEnum paddingMode)
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidAlgorithmParameterException {
-		this(null, null, encryptMode, modeOfOperation, paddingMode);
+		this((Key) null, null, encryptMode, modeOfOperation, paddingMode);
 	}
 
 	public AES(Key key, byte[] iv, boolean encryptMode, ModeOfOperationEnum modeOfOperation,
@@ -49,6 +49,22 @@ public class AES extends BaseAlgo {
 
 		this.KEY = key;
 		this.IV = iv;
+	}
+
+	public AES(byte[] password, byte[] iv, boolean encryptMode, ModeOfOperationEnum modeOfOperation,
+			PaddingModeEnum paddingMode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+			InvalidAlgorithmParameterException {
+		this.CIPHER = Cipher.getInstance(String.format("%s/%s/%s", AES.ALGORITHM, modeOfOperation, paddingMode));
+
+		if (iv == null) {
+			iv = PasswordUtils.getRandomByte(this.CIPHER.getBlockSize());
+		}
+
+		this.KEY = new SecretKeySpec(password, AES.ALGORITHM);
+		this.IV = iv;
+
+		this.CIPHER.init(encryptMode ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, this.KEY,
+				new IvParameterSpec(this.IV));
 	}
 
 	public Key getKey() {

@@ -1,31 +1,10 @@
 package gui;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+import java.security.Key;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-import org.apache.commons.io.FileUtils;
-
-import core.file.FileDigitalCertificate;
-import core.file.FileMeta;
-import core.file.FileUnwrapper;
-import core.file.FileWrapper;
 import core.file.algs.asymmetric.RSA;
-import core.utils.FileIO;
-import core.utils.Pair;
-import exception.ExceptionInfo;
+import core.user.User;
 
 public final class Debug {
 
@@ -92,6 +71,20 @@ public final class Debug {
 		FileDigitalCertificate.sign(inFile, keyPair.getPrivate(), 512, cerFile);
 		
 		System.out.println(FileDigitalCertificate.verify(inFile, keyPair.getPublic(), 512, cerFile));
+		*/
+		// User user = new User("dnanhkhoa@live.com", "123456", "Khoa", "09-01-1995", "0946080395", "District 1", 512);
+		//user.save(new File("Hello.cfg"));
+		/*
+		User user = User.load(new File("Hello.cfg"));
+		Key publicKey = user.getPublicKey();
+		Key privateKey = user.getPrivateKey("123456");
+		RSA rsa = new RSA(publicKey, user.getKeySize(), true);
+		
+		String s = "Khoa";
+		byte[] r1 = rsa.doFinal(s.getBytes());
+		
+		RSA rsa2 = new RSA(privateKey, user.getKeySize(), false);
+		System.out.println(new String(rsa2.doFinal(r1)));
 		*/
 	}
 
