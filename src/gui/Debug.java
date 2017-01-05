@@ -1,16 +1,10 @@
 package gui;
 
 import java.io.File;
-import java.security.Key;
-import java.security.KeyPair;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.filechooser.FileSystemView;
-
-import core.file.FileDigitalCertificate;
-import core.file.algs.asymmetric.RSA;
-import core.model.FileModel;
-import core.user.User;
-import core.user.UserManager;
+import core.utils.FileIO;
 
 public final class Debug {
 
@@ -49,18 +43,16 @@ public final class Debug {
 		*/
 		
 		/*
-		File file = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\src");
 		List<File> files = new ArrayList<>();
-		files.add(file);
-		files.add(new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\release"));
-		File outFile = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.abc");
-		FileIO.pack(files, outFile);
+		files.add(new File("C:\\Users\\Anh Khoa\\Desktop\\Phuc"));
+		File outFile = new File("C:\\Users\\Anh Khoa\\Desktop\\123.abc");
+		FileIO.pack(files, outFile, null);
 		*/
 		
-		/*
-		File f = new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123.abc");
-		FileIO.unpack(f, new File("C:\\Users\\Anh Khoa\\Desktop\\1312288\\FileProtector\\123456"));
-		*/
+		
+		File f = new File("C:\\Users\\Anh Khoa\\Desktop\\123.abc");
+		FileIO.unpack(f, new File("C:\\Users\\Anh Khoa\\Desktop\\Khoa"), null);
+		
 		
 		/*
 		FileMeta fileMeta = new FileMeta();

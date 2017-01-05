@@ -487,6 +487,7 @@ public class FileManager {
 	private JMenuItem getMnuPaste() {
 		if (mnuPaste == null) {
 			mnuPaste = new JMenuItem("Paste");
+			mnuPaste.setVisible(false);
 		}
 		return mnuPaste;
 	}

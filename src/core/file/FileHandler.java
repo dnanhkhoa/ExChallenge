@@ -23,7 +23,6 @@ public final class FileHandler {
 	private static final String SIGNATURE = "ENCRYPTED";
 
 	private final ObservableModel observable;
-	private final ProgressInfo progressInfo;
 	//private final BaseAlgo cipher;
 	//private final List<String> paths;
 	
@@ -34,7 +33,6 @@ public final class FileHandler {
 
 	public FileHandler() {
 		this.observable = new ObservableModel();
-		this.progressInfo = new ProgressInfo();
 	}
 
 	public void registerObserver(Observer observer) {

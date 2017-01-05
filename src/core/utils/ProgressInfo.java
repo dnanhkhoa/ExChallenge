@@ -9,9 +9,21 @@ public final class ProgressInfo {
 	private long current;
 
 	public ProgressInfo() {
-		name = "Idle";
-		total = 0;
-		current = 0;
+		this(0, 0);
+	}
+
+	public ProgressInfo(String name) {
+		this(name, 0, 0);
+	}
+
+	public ProgressInfo(long total, long current) {
+		this("Idle", total, current);
+	}
+
+	public ProgressInfo(String name, long total, long current) {
+		this.name = name;
+		this.total = total;
+		this.current = current;
 	}
 
 	public void reset() {
@@ -42,6 +54,10 @@ public final class ProgressInfo {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void increase() {
+		this.current++;
 	}
 
 	public int getProgressValue() {
