@@ -1,10 +1,13 @@
 package gui;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -12,6 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -51,6 +56,16 @@ public class FileManager {
 	private JTextField txtPath;
 
 	private TableModel tableModel;
+	private JPopupMenu popupMenu;
+	private JMenuItem mnuEncrypt;
+	private JMenuItem mnuDecrypt;
+	private JMenuItem mnuSign;
+	private JMenuItem mnuVerify;
+	private JMenuItem mnuCut;
+	private JMenuItem mnuCopy;
+	private JMenuItem mnuPaste;
+	private JMenuItem mnuRename;
+	private JMenuItem mnuDelete;
 
 	/**
 	 * Launch the application.
@@ -182,8 +197,48 @@ public class FileManager {
 			tbFiles.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			tbFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			tbFiles.setModel(tableModel); // Add data model
+			addPopup(tbFiles, getPopupMenu());
 		}
 		return tbFiles;
+	}
+
+	private JPopupMenu getPopupMenu() {
+		if (popupMenu == null) {
+			popupMenu = new JPopupMenu();
+			popupMenu.add(getMnuEncrypt());
+			popupMenu.add(getMnuDecrypt());
+			popupMenu.addSeparator();
+			popupMenu.add(getMnuSign());
+			popupMenu.add(getMnuVerify());
+			popupMenu.addSeparator();
+			popupMenu.add(getMnuCut());
+			popupMenu.add(getMnuCopy());
+			popupMenu.add(getMnuPaste());
+			popupMenu.addSeparator();
+			popupMenu.add(getMnuRename());
+			popupMenu.add(getMnuDelete());
+		}
+		return popupMenu;
+	}
+
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 
 	private JToolBar getTlbFooter() {
@@ -248,7 +303,7 @@ public class FileManager {
 
 	private JButton getBtnSignature() {
 		if (btnSignature == null) {
-			btnSignature = new JButton("Signature");
+			btnSignature = new JButton("Digital signature");
 			btnSignature.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					do_btnSignature_actionPerformed(e);
@@ -385,5 +440,68 @@ public class FileManager {
 	}
 
 	protected static void do_btnLogOut_actionPerformed(ActionEvent e) {
+	}
+
+	private JMenuItem getMnuEncrypt() {
+		if (mnuEncrypt == null) {
+			mnuEncrypt = new JMenuItem("Encrypt");
+		}
+		return mnuEncrypt;
+	}
+
+	private JMenuItem getMnuDecrypt() {
+		if (mnuDecrypt == null) {
+			mnuDecrypt = new JMenuItem("Decrypt");
+		}
+		return mnuDecrypt;
+	}
+
+	private JMenuItem getMnuSign() {
+		if (mnuSign == null) {
+			mnuSign = new JMenuItem("Digital signature");
+		}
+		return mnuSign;
+	}
+
+	private JMenuItem getMnuVerify() {
+		if (mnuVerify == null) {
+			mnuVerify = new JMenuItem("Verify");
+		}
+		return mnuVerify;
+	}
+
+	private JMenuItem getMnuCut() {
+		if (mnuCut == null) {
+			mnuCut = new JMenuItem("Cut");
+		}
+		return mnuCut;
+	}
+
+	private JMenuItem getMnuCopy() {
+		if (mnuCopy == null) {
+			mnuCopy = new JMenuItem("Copy");
+		}
+		return mnuCopy;
+	}
+
+	private JMenuItem getMnuPaste() {
+		if (mnuPaste == null) {
+			mnuPaste = new JMenuItem("Paste");
+		}
+		return mnuPaste;
+	}
+
+	private JMenuItem getMnuRename() {
+		if (mnuRename == null) {
+			mnuRename = new JMenuItem("Rename");
+		}
+		return mnuRename;
+	}
+
+	private JMenuItem getMnuDelete() {
+		if (mnuDelete == null) {
+			mnuDelete = new JMenuItem("Delete");
+		}
+		return mnuDelete;
 	}
 }

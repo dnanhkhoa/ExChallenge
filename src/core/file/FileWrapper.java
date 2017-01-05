@@ -14,12 +14,18 @@ import exception.ExceptionInfo;
 
 public final class FileWrapper implements AutoCloseable {
 
-	private final static String SIGNATURE = "EXCHALLENGE";
+	private String signature;
 
 	private final OutputStream outputStream;
 	private final DataOutputStream dataOutputStream;
 
 	public FileWrapper(File outFile, FileMeta fileMeta) throws ExceptionInfo, IOException {
+		this(outFile, fileMeta, "EXCHALLENGE");
+	}
+
+	public FileWrapper(File outFile, FileMeta fileMeta, String signature) throws ExceptionInfo, IOException {
+		this.signature = signature;
+
 		this.outputStream = new FileOutputStream(outFile);
 		this.dataOutputStream = new DataOutputStream(outputStream);
 
@@ -37,7 +43,7 @@ public final class FileWrapper implements AutoCloseable {
 			throw new ExceptionInfo("Can not wrap this file!");
 		}
 
-		this.dataOutputStream.write(SIGNATURE.getBytes());
+		this.dataOutputStream.write(this.signature.getBytes());
 		this.dataOutputStream.writeInt(metaData.length);
 		this.dataOutputStream.write(metaData);
 	}

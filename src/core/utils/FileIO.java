@@ -183,7 +183,7 @@ public final class FileIO {
 	}
 
 	public static void copyFiles(List<File> inFiles, File outDir) {
-		
+
 	}
 
 	public static void moveFiles(List<File> inFiles, File outDir) {
@@ -195,6 +195,6 @@ public final class FileIO {
 	}
 
 	public static void renameFile(File oldName, File newName) {
-		
+
 	}
 }

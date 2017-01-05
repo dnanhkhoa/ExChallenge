@@ -1,12 +1,12 @@
 package gui.user;
 
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -18,12 +18,14 @@ import com.jgoodies.forms.layout.RowSpec;
 public class LoginDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private JTextField txtUserName;
 	private JPasswordField txtPassword;
 	private JButton btnSignIn;
 	private JButton btnSignUp;
 	private JButton btnImport;
+	private JLabel lblEmail;
+	private JLabel lblPassword;
 
 	/**
 	 * Create the dialog.
@@ -36,21 +38,23 @@ public class LoginDialog extends JDialog {
 		setFont(new Font("Dialog", Font.PLAIN, 14));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 350, 300);
-		
+
 		getContentPane().setLayout(new FormLayout(
 				new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
 						FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),
 						FormSpecs.UNRELATED_GAP_COLSPEC, },
-				new RowSpec[] { RowSpec.decode("30dlu"), RowSpec.decode("default:grow"),
-						FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-						FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
-						FormSpecs.UNRELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"),
+				new RowSpec[] { RowSpec.decode("30dlu"), FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						RowSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("default:grow"), FormSpecs.UNRELATED_GAP_ROWSPEC,
+						RowSpec.decode("default:grow"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
 						RowSpec.decode("20dlu:grow"), }));
-		getContentPane().add(getTxtUserName(), "2, 2, 3, 1, fill, default");
-		getContentPane().add(getTxtPassword(), "2, 4, 3, 1");
-		getContentPane().add(getBtnSignIn(), "2, 6, 3, 1");
-		getContentPane().add(getBtnSignUp(), "2, 8");
-		getContentPane().add(getBtnImport(), "4, 8");
+		getContentPane().add(getLblEmail(), "2, 2");
+		getContentPane().add(getTxtUserName(), "2, 4, 3, 1, fill, default");
+		getContentPane().add(getLblPassword(), "2, 6");
+		getContentPane().add(getTxtPassword(), "2, 8, 3, 1");
+		getContentPane().add(getBtnSignIn(), "2, 10, 3, 1");
+		getContentPane().add(getBtnSignUp(), "2, 12");
+		getContentPane().add(getBtnImport(), "4, 12");
 
 	}
 
@@ -75,20 +79,22 @@ public class LoginDialog extends JDialog {
 		if (btnSignIn == null) {
 			btnSignIn = new JButton("Sign in");
 			btnSignIn.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					do_btnNewButton_actionPerformed(arg0);
+				public void actionPerformed(ActionEvent e) {
+					do_btnSignIn_actionPerformed(e);
 				}
 			});
 		}
 		return btnSignIn;
 	}
 
-	protected void do_btnNewButton_actionPerformed(ActionEvent arg0) {
-	}
-
 	private JButton getBtnSignUp() {
 		if (btnSignUp == null) {
 			btnSignUp = new JButton("Sign up");
+			btnSignUp.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					do_btnSignUp_actionPerformed(e);
+				}
+			});
 		}
 		return btnSignUp;
 	}
@@ -96,7 +102,35 @@ public class LoginDialog extends JDialog {
 	private JButton getBtnImport() {
 		if (btnImport == null) {
 			btnImport = new JButton("Import");
+			btnImport.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					do_btnImport_actionPerformed(e);
+				}
+			});
 		}
 		return btnImport;
+	}
+
+	private JLabel getLblEmail() {
+		if (lblEmail == null) {
+			lblEmail = new JLabel("Email");
+		}
+		return lblEmail;
+	}
+
+	private JLabel getLblPassword() {
+		if (lblPassword == null) {
+			lblPassword = new JLabel("Password");
+		}
+		return lblPassword;
+	}
+
+	protected void do_btnSignIn_actionPerformed(ActionEvent e) {
+	}
+
+	protected void do_btnSignUp_actionPerformed(ActionEvent e) {
+	}
+
+	protected void do_btnImport_actionPerformed(ActionEvent e) {
 	}
 }

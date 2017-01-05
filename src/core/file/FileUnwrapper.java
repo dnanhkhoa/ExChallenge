@@ -14,19 +14,25 @@ import exception.ExceptionInfo;
 
 public final class FileUnwrapper implements AutoCloseable {
 
-	private final static String SIGNATURE = "EXCHALLENGE";
+	private String signature;
 
 	private final InputStream inputStream;
 	private final DataInputStream dataInputStream;
 	private FileMeta fileMeta = null;
 
 	public FileUnwrapper(File inFile) throws IOException, ExceptionInfo, ClassNotFoundException {
+		this(inFile, "EXCHALLENGE");
+	}
+
+	public FileUnwrapper(File inFile, String signature) throws IOException, ExceptionInfo, ClassNotFoundException {
+		this.signature = signature;
+
 		this.inputStream = new FileInputStream(inFile);
 		this.dataInputStream = new DataInputStream(inputStream);
 
-		byte[] signatureData = new byte[SIGNATURE.length()];
-		if (this.dataInputStream.read(signatureData) != SIGNATURE.length()
-				|| !SIGNATURE.equals(new String(signatureData))) {
+		byte[] signatureData = new byte[this.signature.length()];
+		if (this.dataInputStream.read(signatureData) != this.signature.length()
+				|| !this.signature.equals(new String(signatureData))) {
 			throw new ExceptionInfo("File is invalid!");
 		}
 
