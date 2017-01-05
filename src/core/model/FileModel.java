@@ -53,7 +53,7 @@ public final class FileModel {
 		} else {
 			this.name = file.getName();
 			this.path = file.getPath();
-			this.size = FileUtils.byteCountToDisplaySize(FileUtils.sizeOf(file));
+			this.size = file.isFile() ? FileUtils.byteCountToDisplaySize(FileUtils.sizeOf(file)) : "";
 			this.type = FileSystemView.getFileSystemView().getSystemTypeDescription(file);
 			this.modified = SIMPLE_DATE_FORMAT.format(file.lastModified());
 			this.icon = (ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(file);

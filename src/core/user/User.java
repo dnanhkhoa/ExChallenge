@@ -180,6 +180,6 @@ public final class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("User: %s [%s]", this.email, this.name);
+		return String.format("User: %s [%s]", this.email, this.name.isEmpty() ? "None" : this.name);
 	}
 }

@@ -57,4 +57,16 @@ public final class FileDigitalCertificate {
 		}
 		return hashTemp != null && hash.contentEquals(hashTemp);
 	}
+
+	public static boolean isCerFile(File cerFile) {
+		try (FileInputStream fileInputStream = new FileInputStream(cerFile)) {
+			byte[] headerData = new byte[FileDigitalCertificate.SIGNATURE.length()];
+			if (fileInputStream.read(headerData) == headerData.length && SIGNATURE.equals(new String(headerData))) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

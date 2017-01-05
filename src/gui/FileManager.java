@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.security.Key;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -23,6 +24,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -43,10 +46,12 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import core.file.FileDigitalCertificate;
 import core.handler.CoreHandler;
 import core.model.FileModel;
 import core.model.JLabelRenderer;
 import core.model.TableModel;
+import core.user.User;
 import gui.user.EditDialog;
 import gui.user.LoginDialog;
 
@@ -123,7 +128,7 @@ public class FileManager {
 
 		this.currentPath = new File("").getAbsoluteFile();
 
-		this.monitor = new FileAlterationMonitor(500);
+		this.monitor = new FileAlterationMonitor(1000);
 		this.listener = new FileAlterationListenerAdaptor() {
 			@Override
 			public void onFileCreate(File file) {
@@ -559,15 +564,89 @@ public class FileManager {
 	}
 
 	protected void do_btnSignature_actionPerformed(ActionEvent e) {
-		// -1
+		if (this.tbFiles.getSelectedRowCount() != 1) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select a file!");
+			return;
+		}
+
 		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
 		File file = new File(fileModel.getPath());
+
 		if (file.isFile()) {
-			// FileDigitalCertificate.sign(file, key, keySize, cerFile);
+
+			JPanel panel = new JPanel();
+			JLabel label = new JLabel("Enter a password to confirm:");
+			JPasswordField pass = new JPasswordField(10);
+			panel.add(label);
+			panel.add(pass);
+			String[] options = new String[] { "OK", "Cancel" };
+			int option = JOptionPane.showOptionDialog(null, panel, "Input password", JOptionPane.NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
+
+			if (option != 0)
+				return;
+
+			String password = new String(pass.getPassword());
+			if (!CoreHandler.getInstance().currentUser.confirmPassword(password)) {
+				JOptionPane.showMessageDialog(this.frmMain, "Password is wrong!");
+				return;
+			}
+
+			Key privateKey = CoreHandler.getInstance().currentUser.getPrivateKey(password);
+			try {
+				FileDigitalCertificate.sign(file, privateKey, CoreHandler.getInstance().currentUser.getKeySize(),
+						new File(file.getPath() + ".cer"));
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
+			}
+		} else {
+			JOptionPane.showMessageDialog(this.frmMain, "This is not file!");
 		}
 	}
 
 	protected void do_btnVerify_actionPerformed(ActionEvent e) {
+		if (this.tbFiles.getSelectedRowCount() != 2) {
+			JOptionPane.showMessageDialog(this.frmMain, "Please select a file pair!");
+			return;
+		}
+
+		int[] files = this.tbFiles.getSelectedRows();
+
+		File cerFile = null;
+
+		FileModel fileModel = this.tableModel.fileModels.get(files[0]);
+		File file = new File(fileModel.getPath());
+
+		if (FileDigitalCertificate.isCerFile(file)) {
+			cerFile = file;
+		}
+
+		if (cerFile == null) {
+			fileModel = this.tableModel.fileModels.get(files[1]);
+			cerFile = new File(fileModel.getPath());
+
+			if (!FileDigitalCertificate.isCerFile(cerFile)) {
+				JOptionPane.showMessageDialog(this.frmMain, "Please select a certificate file!");
+				return;
+			}
+		} else {
+			fileModel = this.tableModel.fileModels.get(files[1]);
+			file = new File(fileModel.getPath());
+		}
+
+		for (User user : CoreHandler.getInstance().userManager.getUsers()) {
+			try {
+				if (FileDigitalCertificate.verify(file, user.getPublicKey(), user.getKeySize(), cerFile)) {
+					JOptionPane.showMessageDialog(this.frmMain,
+							"Digital certificate has been registered by user " + user.getEmail(),
+							"Digital certificate is valid", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		JOptionPane.showMessageDialog(this.frmMain, "Digital certificate is invalid!");
 	}
 
 	protected void do_btnExport_actionPerformed(ActionEvent e) {
@@ -634,8 +713,11 @@ public class FileManager {
 			e.printStackTrace();
 		}
 
+		this.monitor.removeObserver(this.observer);
+
 		this.observer = new FileAlterationObserver(this.currentPath);
 		this.observer.addListener(this.listener);
+
 		this.monitor.addObserver(this.observer);
 
 		try {
@@ -702,7 +784,7 @@ public class FileManager {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 		for (File file : CoreHandler.getInstance().fileBuffer) {
 			if (CoreHandler.getInstance().isMove) {
 
@@ -730,9 +812,9 @@ public class FileManager {
 
 			}
 		}
-		
+
 		this.browseFiles(this.currentPath);
-		
+
 		CoreHandler.getInstance().fileBuffer.clear();
 	}
 
