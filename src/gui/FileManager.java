@@ -31,6 +31,7 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 import core.handler.CoreHandler;
+import core.model.JLabelRenderer;
 import core.model.TableModel;
 
 public class FileManager {
@@ -190,11 +191,11 @@ public class FileManager {
 	private JTable getTbFiles() {
 		if (tbFiles == null) {
 			tbFiles = new JTable();
-			tbFiles.setRowHeight(18);
+			tbFiles.setShowGrid(false);
+			tbFiles.setFocusable(false);
 			tbFiles.setFillsViewportHeight(true);
-
+			tbFiles.setDefaultRenderer(JLabel.class, new JLabelRenderer());
 			tbFiles.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			tbFiles.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			tbFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			tbFiles.setModel(tableModel); // Add data model
 			addPopup(tbFiles, getPopupMenu());
@@ -410,8 +411,8 @@ public class FileManager {
 		return btnLogOut;
 	}
 
-	protected static void do_btnUp_actionPerformed(ActionEvent arg0) {
-		System.out.println("Fire up");
+	protected void do_btnUp_actionPerformed(ActionEvent arg0) {
+
 	}
 
 	protected static void do_txtPath_actionPerformed(ActionEvent e) {

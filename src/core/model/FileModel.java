@@ -1,8 +1,9 @@
 package core.model;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 
-import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.io.FileUtils;
@@ -13,11 +14,14 @@ import exception.ExceptionInfo;
 
 public final class FileModel {
 
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
 	private String name;
 	private String path;
 	private String size;
 	private String type;
-	private Icon icon;
+	private String modified;
+	private ImageIcon icon;
 	private boolean isBack;
 
 	public FileModel(String path) throws ExceptionInfo {
@@ -43,14 +47,16 @@ public final class FileModel {
 				this.path = back.getParent();
 				this.size = "";
 				this.type = FileSystemView.getFileSystemView().getSystemTypeDescription(back);
-				this.icon = FileSystemView.getFileSystemView().getSystemIcon(back);
+				this.modified = "";
+				this.icon = (ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(back);
 			}
 		} else {
 			this.name = file.getName();
 			this.path = file.getPath();
 			this.size = FileUtils.byteCountToDisplaySize(FileUtils.sizeOf(file));
 			this.type = FileSystemView.getFileSystemView().getSystemTypeDescription(file);
-			this.icon = FileSystemView.getFileSystemView().getSystemIcon(file);
+			this.modified = SIMPLE_DATE_FORMAT.format(file.lastModified());
+			this.icon = (ImageIcon) FileSystemView.getFileSystemView().getSystemIcon(file);
 		}
 	}
 
@@ -70,7 +76,15 @@ public final class FileModel {
 		return type;
 	}
 
-	public Icon getIcon() {
+	public String getModified() {
+		return modified;
+	}
+
+	public void setModified(String modified) {
+		this.modified = modified;
+	}
+
+	public ImageIcon getIcon() {
 		return icon;
 	}
 
