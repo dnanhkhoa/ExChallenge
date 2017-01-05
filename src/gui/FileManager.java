@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -18,7 +19,9 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -65,6 +68,12 @@ public class FileManager {
 
 	private TableModel tableModel;
 	private File currentPath;
+	private JPopupMenu popupMenu;
+	private JMenuItem mnuCut;
+	private JMenuItem mnuCopy;
+	private JMenuItem mnuPaste;
+	private JMenuItem mnuRename;
+	private JMenuItem mnuDelete;
 
 	/**
 	 * Launch the application.
@@ -214,8 +223,76 @@ public class FileManager {
 			tbFiles.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			tbFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			tbFiles.setModel(tableModel);
+			addPopup(tbFiles, getPopupMenu());
 		}
 		return tbFiles;
+	}
+
+	private JPopupMenu getPopupMenu() {
+		if (popupMenu == null) {
+			popupMenu = new JPopupMenu();
+			popupMenu.add(getMnuCut());
+			popupMenu.add(getMnuCopy());
+			popupMenu.add(getMnuPaste());
+			popupMenu.add(getMnuRename());
+			popupMenu.add(getMnuDelete());
+		}
+		return popupMenu;
+	}
+
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
+	}
+
+	private JMenuItem getMnuCut() {
+		if (mnuCut == null) {
+			mnuCut = new JMenuItem("Cut");
+		}
+		return mnuCut;
+	}
+
+	private JMenuItem getMnuCopy() {
+		if (mnuCopy == null) {
+			mnuCopy = new JMenuItem("Copy");
+		}
+		return mnuCopy;
+	}
+
+	private JMenuItem getMnuPaste() {
+		if (mnuPaste == null) {
+			mnuPaste = new JMenuItem("Paste");
+		}
+		return mnuPaste;
+	}
+
+	private JMenuItem getMnuRename() {
+		if (mnuRename == null) {
+			mnuRename = new JMenuItem("Rename");
+		}
+		return mnuRename;
+	}
+
+	private JMenuItem getMnuDelete() {
+		if (mnuDelete == null) {
+			mnuDelete = new JMenuItem("Delete");
+		}
+		return mnuDelete;
 	}
 
 	private JToolBar getTlbFooter() {
