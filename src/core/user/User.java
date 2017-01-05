@@ -50,13 +50,6 @@ public final class User implements Serializable {
 			int keySizeIndex) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
 			InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
 
-		this.update(email, password, name, birthday, phone, address, keySize, keySizeIndex);
-	}
-
-	public void update(String email, String password, String name, String birthday, String phone, String address,
-			int keySize, int keySizeIndex) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
-			InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-
 		this.email = email;
 		this.name = name;
 		this.birthday = birthday;
@@ -73,6 +66,32 @@ public final class User implements Serializable {
 		KeyPair keyPair = RSA.generateKeyPair(this.keySize);
 		this.publicKey = keyPair.getPublic();
 		this.privateKey = aes.doFinal(keyPair.getPrivate().getEncoded());
+	}
+
+	public void update(String password, String name, String birthday, String phone, String address, int keySize,
+			int keySizeIndex) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
+			InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+
+		this.name = name;
+		this.birthday = birthday;
+		this.phone = phone;
+		this.address = address;
+
+		if (!password.isEmpty()) {
+
+			this.keySize = keySize;
+			this.keySizeIndex = keySizeIndex;
+			this.salt = PasswordUtils.getRandomByte(32);
+			this.password = PasswordUtils.hashPassword(password, this.salt);
+
+			AES aes = new AES(PasswordUtils.md5(this.password), User.IV.getBytes(), true, ModeOfOperationEnum.CBC,
+					PaddingModeEnum.PKCS5Padding);
+
+			KeyPair keyPair = RSA.generateKeyPair(this.keySize);
+			this.publicKey = keyPair.getPublic();
+			this.privateKey = aes.doFinal(keyPair.getPrivate().getEncoded());
+
+		}
 	}
 
 	public String getEmail() {

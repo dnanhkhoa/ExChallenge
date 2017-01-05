@@ -208,15 +208,12 @@ public class EditDialog extends JDialog {
 	}
 
 	protected void do_btnSignUp_actionPerformed(ActionEvent e) {
-		if (this.getTxtPassword().getPassword().length == 0) {
-			JOptionPane.showMessageDialog(this, "You must fill the password field!");
-			return;
-		}
 		try {
-			CoreHandler.getInstance().currentUser.update(CoreHandler.getInstance().currentUser.getEmail(),
-					new String(this.getTxtPassword().getPassword()), this.getTxtName().getText(),
-					this.getTxtBirthday().getText(), this.getTxtPhone().getText(), this.getTxtAddress().getText(),
-					(int) this.getCbbKeyLength().getSelectedItem(), this.getCbbKeyLength().getSelectedIndex());
+			System.out.println(new String(this.getTxtPassword().getPassword()).length());
+			CoreHandler.getInstance().currentUser.update(new String(this.getTxtPassword().getPassword()),
+					this.getTxtName().getText(), this.getTxtBirthday().getText(), this.getTxtPhone().getText(),
+					this.getTxtAddress().getText(), (int) this.getCbbKeyLength().getSelectedItem(),
+					this.getCbbKeyLength().getSelectedIndex());
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex.getMessage());
 		}

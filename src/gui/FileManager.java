@@ -30,7 +30,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
-import core.file.FileDigitalCertificate;
 import core.handler.CoreHandler;
 import core.model.FileModel;
 import core.model.JLabelRenderer;
@@ -404,8 +403,7 @@ public class FileManager {
 		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
 		File file = new File(fileModel.getPath());
 		if (file.isFile()) {
-			
-			//FileDigitalCertificate.sign(file, key, keySize, cerFile);
+			// FileDigitalCertificate.sign(file, key, keySize, cerFile);
 		}
 	}
 
