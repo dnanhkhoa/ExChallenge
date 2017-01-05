@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -29,6 +31,12 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -64,16 +72,21 @@ public class FileManager {
 	private JButton btnUp;
 	private JTextField txtPath;
 
-	private JDialog loginDialog;
-
-	private TableModel tableModel;
-	private File currentPath;
 	private JPopupMenu popupMenu;
 	private JMenuItem mnuCut;
 	private JMenuItem mnuCopy;
 	private JMenuItem mnuPaste;
 	private JMenuItem mnuRename;
 	private JMenuItem mnuDelete;
+
+	private JDialog loginDialog;
+
+	private TableModel tableModel;
+	private File currentPath;
+
+	private FileAlterationObserver observer;
+	private FileAlterationMonitor monitor;
+	private FileAlterationListener listener;
 
 	/**
 	 * Launch the application.
@@ -110,6 +123,39 @@ public class FileManager {
 
 		this.currentPath = new File("").getAbsoluteFile();
 
+		this.monitor = new FileAlterationMonitor(500);
+		this.listener = new FileAlterationListenerAdaptor() {
+			@Override
+			public void onFileCreate(File file) {
+				browseFiles(currentPath);
+			}
+
+			@Override
+			public void onFileDelete(File file) {
+				browseFiles(currentPath);
+			}
+
+			@Override
+			public void onFileChange(File file) {
+				browseFiles(currentPath);
+			}
+
+			@Override
+			public void onDirectoryChange(File directory) {
+				browseFiles(currentPath);
+			}
+
+			@Override
+			public void onDirectoryCreate(File directory) {
+				browseFiles(currentPath);
+			}
+
+			@Override
+			public void onDirectoryDelete(File directory) {
+				browseFiles(currentPath);
+			}
+		};
+
 		this.tableModel = new TableModel();
 		this.browseFiles(this.currentPath);
 	}
@@ -119,6 +165,12 @@ public class FileManager {
 	 */
 	private void initializeGUI() {
 		this.frmMain = new JFrame();
+		this.frmMain.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				do_frmMain_windowClosing(arg0);
+			}
+		});
 		this.frmMain.setLocationRelativeTo(null);
 		this.frmMain.setTitle("ExChallenge");
 		this.frmMain.setBounds(100, 100, 850, 600);
@@ -234,22 +286,25 @@ public class FileManager {
 			popupMenu.add(getMnuCut());
 			popupMenu.add(getMnuCopy());
 			popupMenu.add(getMnuPaste());
+			popupMenu.addSeparator();
 			popupMenu.add(getMnuRename());
 			popupMenu.add(getMnuDelete());
 		}
 		return popupMenu;
 	}
 
-	private static void addPopup(Component component, final JPopupMenu popup) {
+	private void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger()) {
+					checkItemMenu();
 					showMenu(e);
 				}
 			}
 
 			public void mouseReleased(MouseEvent e) {
 				if (e.isPopupTrigger()) {
+					checkItemMenu();
 					showMenu(e);
 				}
 			}
@@ -263,6 +318,11 @@ public class FileManager {
 	private JMenuItem getMnuCut() {
 		if (mnuCut == null) {
 			mnuCut = new JMenuItem("Cut");
+			mnuCut.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					do_mnuCut_actionPerformed(arg0);
+				}
+			});
 		}
 		return mnuCut;
 	}
@@ -270,6 +330,11 @@ public class FileManager {
 	private JMenuItem getMnuCopy() {
 		if (mnuCopy == null) {
 			mnuCopy = new JMenuItem("Copy");
+			mnuCopy.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					do_mnuCopy_actionPerformed(e);
+				}
+			});
 		}
 		return mnuCopy;
 	}
@@ -277,6 +342,11 @@ public class FileManager {
 	private JMenuItem getMnuPaste() {
 		if (mnuPaste == null) {
 			mnuPaste = new JMenuItem("Paste");
+			mnuPaste.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					do_mnuPaste_actionPerformed(e);
+				}
+			});
 		}
 		return mnuPaste;
 	}
@@ -284,6 +354,11 @@ public class FileManager {
 	private JMenuItem getMnuRename() {
 		if (mnuRename == null) {
 			mnuRename = new JMenuItem("Rename");
+			mnuRename.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					do_mnuRename_actionPerformed(e);
+				}
+			});
 		}
 		return mnuRename;
 	}
@@ -291,6 +366,11 @@ public class FileManager {
 	private JMenuItem getMnuDelete() {
 		if (mnuDelete == null) {
 			mnuDelete = new JMenuItem("Delete");
+			mnuDelete.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					do_mnuDelete_actionPerformed(e);
+				}
+			});
 		}
 		return mnuDelete;
 	}
@@ -479,6 +559,7 @@ public class FileManager {
 	}
 
 	protected void do_btnSignature_actionPerformed(ActionEvent e) {
+		// -1
 		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
 		File file = new File(fileModel.getPath());
 		if (file.isFile()) {
@@ -536,30 +617,199 @@ public class FileManager {
 		}
 	}
 
-	private void browseFiles(File file) {
+	protected void browseFiles(File file) {
+		if (!this.currentPath.exists()) {
+			this.currentPath = new File("").getAbsoluteFile();
+		}
 		if (!file.isDirectory()) {
 			this.getTxtPath().setText(this.currentPath.getPath());
 			return;
 		}
 		this.tableModel.browse(file);
 		this.currentPath = file;
+
+		try {
+			this.monitor.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		this.observer = new FileAlterationObserver(this.currentPath);
+		this.observer.addListener(this.listener);
+		this.monitor.addObserver(this.observer);
+
+		try {
+			this.monitor.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		this.getTxtPath().setText(this.currentPath.getPath());
 	}
 
-	private void browserBack() {
+	protected void browserBack() {
 		if (this.currentPath.getParentFile() != null) {
 			this.browseFiles(this.currentPath.getParentFile());
 		}
 	}
 
-	private void isLogged() {
+	protected void isLogged() {
 		if (CoreHandler.getInstance().currentUser == null) {
 			this.frmMain.setVisible(false);
+			this.loginDialog.requestFocus();
 			this.loginDialog.setVisible(true);
 			this.frmMain.setVisible(true);
 		}
 		if (CoreHandler.getInstance().currentUser != null) {
 			this.lblUser.setText(CoreHandler.getInstance().currentUser.toString());
 		}
+	}
+
+	protected void do_frmMain_windowClosing(WindowEvent arg0) {
+		do_btnLogOut_actionPerformed(null);
+	}
+
+	protected void do_mnuCut_actionPerformed(ActionEvent arg0) {
+		if (this.tbFiles.getSelectedRow() == -1)
+			return;
+
+		CoreHandler.getInstance().fileBuffer.clear();
+
+		int[] indices = this.tbFiles.getSelectedRows();
+		for (int i : indices) {
+			if (this.tableModel.fileModels.get(i).isBack())
+				continue;
+			CoreHandler.getInstance().fileBuffer.add(new File(this.tableModel.fileModels.get(i).getPath()));
+		}
+		CoreHandler.getInstance().isMove = true;
+	}
+
+	protected void do_mnuCopy_actionPerformed(ActionEvent e) {
+		CoreHandler.getInstance().fileBuffer.clear();
+
+		int[] indices = this.tbFiles.getSelectedRows();
+		for (int i : indices) {
+			if (this.tableModel.fileModels.get(i).isBack())
+				continue;
+			CoreHandler.getInstance().fileBuffer.add(new File(this.tableModel.fileModels.get(i).getPath()));
+		}
+		CoreHandler.getInstance().isMove = false;
+	}
+
+	protected void do_mnuPaste_actionPerformed(ActionEvent e) {
+		try {
+			this.monitor.stop();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		for (File file : CoreHandler.getInstance().fileBuffer) {
+			if (CoreHandler.getInstance().isMove) {
+
+				try {
+					if (file.isDirectory()) {
+						FileUtils.moveDirectoryToDirectory(file, this.currentPath, true);
+					} else if (file.isFile()) {
+						FileUtils.moveFileToDirectory(file, this.currentPath, true);
+					}
+				} catch (IOException ex) {
+					JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
+				}
+
+			} else {
+
+				try {
+					if (file.isDirectory()) {
+						FileUtils.copyDirectoryToDirectory(file, this.currentPath);
+					} else if (file.isFile()) {
+						FileUtils.copyFileToDirectory(file, this.currentPath);
+					}
+				} catch (IOException ex) {
+					JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
+				}
+
+			}
+		}
+		
+		this.browseFiles(this.currentPath);
+		
+		CoreHandler.getInstance().fileBuffer.clear();
+	}
+
+	protected void do_mnuRename_actionPerformed(ActionEvent e) {
+		if (this.tbFiles.getSelectedRow() == -1)
+			return;
+
+		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
+		File file = new File(fileModel.getPath());
+		if (file.exists()) {
+			String newName = JOptionPane.showInputDialog(this.frmMain, "Enter a new name", file.getName());
+			if (newName == null)
+				return;
+			File newFile = new File(file.getParent(), newName);
+			if (newFile.exists()) {
+				JOptionPane.showMessageDialog(this.frmMain,
+						"There is already a file with the same name in this location!");
+				return;
+			}
+			try {
+				try {
+					this.monitor.stop();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				if (file.isDirectory()) {
+					FileUtils.moveDirectory(file, newFile);
+				} else if (file.isFile()) {
+					FileUtils.moveFile(file, newFile);
+				}
+
+				this.browseFiles(this.currentPath);
+			} catch (IOException ex) {
+				JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
+			}
+		}
+	}
+
+	protected void do_mnuDelete_actionPerformed(ActionEvent e) {
+		if (this.tbFiles.getSelectedRow() == -1)
+			return;
+
+		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
+		File file = new File(fileModel.getPath());
+		if (file.exists()) {
+			if (JOptionPane.showConfirmDialog(this.frmMain, "Are you sure?", "Confirm",
+					JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+				try {
+					this.monitor.stop();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				try {
+					FileUtils.forceDelete(file);
+				} catch (IOException ex) {
+					JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
+				}
+
+				this.browseFiles(this.currentPath);
+			}
+		}
+	}
+
+	protected void checkItemMenu() {
+		if (this.tbFiles.getSelectedRow() == -1) {
+			this.mnuCut.setEnabled(false);
+			this.mnuCopy.setEnabled(false);
+			this.mnuRename.setEnabled(false);
+			this.mnuDelete.setEnabled(false);
+		} else {
+			this.mnuCut.setEnabled(true);
+			this.mnuCopy.setEnabled(true);
+			this.mnuRename.setEnabled(true);
+			this.mnuDelete.setEnabled(true);
+		}
+		this.mnuPaste.setEnabled(!CoreHandler.getInstance().fileBuffer.isEmpty());
 	}
 }

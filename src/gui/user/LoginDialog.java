@@ -85,6 +85,11 @@ public class LoginDialog extends JDialog {
 	private JPasswordField getTxtPassword() {
 		if (txtPassword == null) {
 			txtPassword = new JPasswordField();
+			txtPassword.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					do_txtPassword_actionPerformed(arg0);
+				}
+			});
 
 		}
 		return txtPassword;
@@ -214,5 +219,9 @@ public class LoginDialog extends JDialog {
 	protected void do_this_windowClosing(WindowEvent arg0) {
 		CoreHandler.getInstance().close();
 		System.exit(0);
+	}
+	
+	protected void do_txtPassword_actionPerformed(ActionEvent arg0) {
+		do_btnSignIn_actionPerformed(arg0);
 	}
 }

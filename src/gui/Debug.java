@@ -1,18 +1,11 @@
 package gui;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-
-import core.file.FileHandler;
-import core.file.algs.symmetric.AES;
-import core.file.algs.symmetric.enums.AlgoEnum;
-import core.file.algs.symmetric.enums.ModeOfOperationEnum;
-import core.file.algs.symmetric.enums.PaddingModeEnum;
-import core.user.User;
-import core.utils.FileIO;
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 
 public final class Debug {
 
@@ -111,9 +104,26 @@ public final class Debug {
 		fileHandler = new FileHandler(fs);
 		fileHandler.decrypt(f2, user, "123");
 		*/
-		File f = new File("C:\\");
-		for (File z : f.listFiles()) {
-			System.out.println(z);
-		}
+		FileAlterationObserver observer = new FileAlterationObserver("D:\\Projects\\Java\\ExChallenge");
+		FileAlterationMonitor monitor = new FileAlterationMonitor(1000);
+		FileAlterationListener listener = new FileAlterationListenerAdaptor() {
+		    @Override
+		    public void onFileCreate(File file) {
+		        System.out.println("Create");
+		    }
+		 
+		    @Override
+		    public void onFileDelete(File file) {
+		    	System.out.println("Delete");
+		    }
+		 
+		    @Override
+		    public void onFileChange(File file) {
+		    	System.out.println("Change");
+		    }
+		};
+		observer.addListener(listener);
+		monitor.addObserver(observer);
+		monitor.start();
 	}
 }
