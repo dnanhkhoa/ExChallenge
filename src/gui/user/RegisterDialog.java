@@ -1,6 +1,5 @@
 package gui.user;
 
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -18,6 +18,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import core.handler.CoreHandler;
+import core.user.User;
+
 public class RegisterDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -25,7 +28,7 @@ public class RegisterDialog extends JDialog {
 	private JTextField txtEmail;
 	private JTextField txtName;
 	private JTextField txtBirthday;
-	private JTextField textField;
+	private JTextField txtPhone;
 	private JTextField txtAddress;
 	private JLabel lblEmail;
 	private JLabel lblPassword;
@@ -37,23 +40,6 @@ public class RegisterDialog extends JDialog {
 	private JButton btnSignUp;
 	private JComboBox<Integer> cbbKeyLength;
 	private JPasswordField txtPassword;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RegisterDialog dialog = new RegisterDialog();
-					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the dialog.
@@ -85,7 +71,7 @@ public class RegisterDialog extends JDialog {
 		getContentPane().add(getLblBirthday(), "2, 8, right, default");
 		getContentPane().add(getTxtBirthday(), "4, 8, fill, default");
 		getContentPane().add(getLblPhone(), "2, 10, right, default");
-		getContentPane().add(getTextField(), "4, 10, fill, default");
+		getContentPane().add(getTxtPhone(), "4, 10, fill, default");
 		getContentPane().add(getLblAddress(), "2, 12, right, default");
 		getContentPane().add(getTxtAddress(), "4, 12, fill, default");
 		getContentPane().add(getLblKeyLength(), "2, 14, right, default");
@@ -118,12 +104,12 @@ public class RegisterDialog extends JDialog {
 		return txtBirthday;
 	}
 
-	private JTextField getTextField() {
-		if (textField == null) {
-			textField = new JTextField();
-			textField.setColumns(10);
+	private JTextField getTxtPhone() {
+		if (txtPhone == null) {
+			txtPhone = new JTextField();
+			txtPhone.setColumns(10);
 		}
-		return textField;
+		return txtPhone;
 	}
 
 	private JTextField getTxtAddress() {
@@ -215,5 +201,24 @@ public class RegisterDialog extends JDialog {
 	}
 
 	protected void do_btnSignUp_actionPerformed(ActionEvent e) {
+		if (this.getTxtEmail().getText().isEmpty() || this.getTxtPassword().getPassword().length == 0) {
+			JOptionPane.showMessageDialog(this, "You must fill above field!");
+			return;
+		}
+		User user = CoreHandler.getInstance().userManager.findUserByEmail(this.getTxtEmail().getText());
+		if (user != null) {
+			JOptionPane.showMessageDialog(this, "Email already exists!");
+			return;
+		}
+		try {
+			user = new User(this.getTxtEmail().getText(), new String(this.getTxtPassword().getPassword()),
+					this.getTxtName().getText(), this.getTxtBirthday().getText(), this.getTxtPhone().getText(),
+					this.getTxtAddress().getText(), (int) this.getCbbKeyLength().getSelectedItem(),
+					this.getCbbKeyLength().getSelectedIndex());
+			CoreHandler.getInstance().userManager.add(user);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage());
+		}
+		this.dispose();
 	}
 }

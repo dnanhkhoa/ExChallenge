@@ -44,16 +44,17 @@ public final class User implements Serializable {
 	private byte[] privateKey;
 	private int keySize;
 	private byte[] salt;
+	private int keySizeIndex;
 
-	public User(String email, String password, String name, String birthday, String phone, String address, int keySize)
-			throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
+	public User(String email, String password, String name, String birthday, String phone, String address, int keySize,
+			int keySizeIndex) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
 			InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
 
-		this.update(email, password, name, birthday, phone, address, keySize);
+		this.update(email, password, name, birthday, phone, address, keySize, keySizeIndex);
 	}
 
 	public void update(String email, String password, String name, String birthday, String phone, String address,
-			int keySize) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
+			int keySize, int keySizeIndex) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException,
 			InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
 
 		this.email = email;
@@ -62,6 +63,7 @@ public final class User implements Serializable {
 		this.phone = phone;
 		this.address = address;
 		this.keySize = keySize;
+		this.keySizeIndex = keySizeIndex;
 		this.salt = PasswordUtils.getRandomByte(32);
 		this.password = PasswordUtils.hashPassword(password, this.salt);
 
@@ -122,6 +124,10 @@ public final class User implements Serializable {
 
 	public byte[] getSalt() {
 		return salt;
+	}
+
+	public int getKeySizeIndex() {
+		return keySizeIndex;
 	}
 
 	public boolean confirmPassword(String password) {

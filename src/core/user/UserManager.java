@@ -2,7 +2,6 @@ package core.user;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -59,7 +58,7 @@ public final class UserManager implements Serializable {
 		return userManager;
 	}
 
-	public void save(File outFile) throws FileNotFoundException, IOException {
+	public void save(File outFile) throws IOException {
 		try (FileOutputStream fileOutputStream = new FileOutputStream(outFile)) {
 			try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
 				objectOutputStream.writeObject(this);

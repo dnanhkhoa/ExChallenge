@@ -3,10 +3,13 @@ package gui.user;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -14,6 +17,9 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+
+import core.handler.CoreHandler;
+import core.user.User;
 
 public class LoginDialog extends JDialog {
 
@@ -31,12 +37,18 @@ public class LoginDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public LoginDialog() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				do_this_windowClosing(arg0);
+			}
+		});
+		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setResizable(false);
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 14));
 		setTitle("Login");
 		setModal(true);
 		setFont(new Font("Dialog", Font.PLAIN, 14));
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 350, 300);
 
 		getContentPane().setLayout(new FormLayout(
@@ -126,11 +138,36 @@ public class LoginDialog extends JDialog {
 	}
 
 	protected void do_btnSignIn_actionPerformed(ActionEvent e) {
+		if (this.getTxtUserName().getText().isEmpty() || this.getTxtPassword().getPassword().length == 0) {
+			JOptionPane.showMessageDialog(this, "You must fill above field!");
+			return;
+		}
+		User user = CoreHandler.getInstance().userManager.login(this.getTxtUserName().getText(),
+				new String(this.getTxtPassword().getPassword()));
+		if (user == null) {
+			JOptionPane.showMessageDialog(this, "Email or password is wrong!");
+			return;
+		}
+		CoreHandler.getInstance().currentUser = user;
+		this.setVisible(false);
+		this.getTxtUserName().setText("");
+		this.getTxtPassword().setText("");
 	}
 
 	protected void do_btnSignUp_actionPerformed(ActionEvent e) {
+		this.setVisible(false);
+
+		JDialog dialog = new RegisterDialog();
+		dialog.setLocationRelativeTo(this);
+		dialog.setVisible(true);
+		this.setVisible(true);
 	}
 
 	protected void do_btnImport_actionPerformed(ActionEvent e) {
+	}
+
+	protected void do_this_windowClosing(WindowEvent arg0) {
+		CoreHandler.getInstance().close();
+		System.exit(0);
 	}
 }

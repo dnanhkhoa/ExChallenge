@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
@@ -14,10 +13,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -35,6 +33,8 @@ import core.handler.CoreHandler;
 import core.model.FileModel;
 import core.model.JLabelRenderer;
 import core.model.TableModel;
+import gui.user.EditDialog;
+import gui.user.LoginDialog;
 
 public class FileManager {
 
@@ -58,18 +58,9 @@ public class FileManager {
 	private JButton btnUp;
 	private JTextField txtPath;
 
-	private TableModel tableModel;
-	private JPopupMenu popupMenu;
-	private JMenuItem mnuEncrypt;
-	private JMenuItem mnuDecrypt;
-	private JMenuItem mnuSign;
-	private JMenuItem mnuVerify;
-	private JMenuItem mnuCut;
-	private JMenuItem mnuCopy;
-	private JMenuItem mnuPaste;
-	private JMenuItem mnuRename;
-	private JMenuItem mnuDelete;
+	private JDialog loginDialog;
 
+	private TableModel tableModel;
 	private File currentPath;
 
 	/**
@@ -116,6 +107,7 @@ public class FileManager {
 	 */
 	private void initializeGUI() {
 		this.frmMain = new JFrame();
+		this.frmMain.setLocationRelativeTo(null);
 		this.frmMain.setTitle("ExChallenge");
 		this.frmMain.setBounds(100, 100, 850, 600);
 		this.frmMain.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -133,6 +125,12 @@ public class FileManager {
 		this.frmMain.getContentPane().add(getTxtPath(), "4, 4, fill, default");
 		this.frmMain.getContentPane().add(getScrollPane(), "2, 6, 3, 1, fill, fill");
 		this.frmMain.getContentPane().add(getTlbFooter(), "2, 8, 3, 1");
+
+		this.loginDialog = new LoginDialog();
+		this.loginDialog.setLocationRelativeTo(this.frmMain);
+		this.loginDialog.setVisible(false);
+
+		this.isLogged();
 	}
 
 	private JToolBar getTlbHeader() {
@@ -199,60 +197,21 @@ public class FileManager {
 	private JTable getTbFiles() {
 		if (tbFiles == null) {
 			tbFiles = new JTable();
+			tbFiles.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					do_tbFiles_mouseClicked(arg0);
+				}
+			});
 			tbFiles.setShowGrid(false);
 			tbFiles.setFocusable(false);
 			tbFiles.setFillsViewportHeight(true);
 			tbFiles.setDefaultRenderer(JLabel.class, new JLabelRenderer());
 			tbFiles.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			tbFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			tbFiles.setModel(tableModel); // Add data model
-			addPopup(tbFiles, getPopupMenu());
+			tbFiles.setModel(tableModel);
 		}
 		return tbFiles;
-	}
-
-	private JPopupMenu getPopupMenu() {
-		if (popupMenu == null) {
-			popupMenu = new JPopupMenu();
-			popupMenu.add(getMnuEncrypt());
-			popupMenu.add(getMnuDecrypt());
-			popupMenu.addSeparator();
-			popupMenu.add(getMnuSign());
-			popupMenu.add(getMnuVerify());
-			popupMenu.addSeparator();
-			popupMenu.add(getMnuCut());
-			popupMenu.add(getMnuCopy());
-			popupMenu.add(getMnuPaste());
-			popupMenu.addSeparator();
-			popupMenu.add(getMnuRename());
-			popupMenu.add(getMnuDelete());
-		}
-		return popupMenu;
-	}
-
-	private void addPopup(Component component, final JPopupMenu popup) {
-		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-
-			private void showMenu(MouseEvent e) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				do_tbFiles_mouseClicked(arg0);
-			}
-		});
 	}
 
 	private JToolBar getTlbFooter() {
@@ -448,73 +407,21 @@ public class FileManager {
 	}
 
 	protected void do_btnEditProfile_actionPerformed(ActionEvent e) {
+		if (CoreHandler.getInstance().currentUser != null) {
+			this.frmMain.setVisible(false);
+
+			JDialog dialog = new EditDialog();
+			dialog.setLocationRelativeTo(this.frmMain);
+			dialog.setVisible(true);
+
+			this.frmMain.setVisible(true);
+			this.isLogged();
+		}
 	}
 
 	protected void do_btnLogOut_actionPerformed(ActionEvent e) {
-	}
-
-	private JMenuItem getMnuEncrypt() {
-		if (mnuEncrypt == null) {
-			mnuEncrypt = new JMenuItem("Encrypt");
-		}
-		return mnuEncrypt;
-	}
-
-	private JMenuItem getMnuDecrypt() {
-		if (mnuDecrypt == null) {
-			mnuDecrypt = new JMenuItem("Decrypt");
-		}
-		return mnuDecrypt;
-	}
-
-	private JMenuItem getMnuSign() {
-		if (mnuSign == null) {
-			mnuSign = new JMenuItem("Digital signature");
-		}
-		return mnuSign;
-	}
-
-	private JMenuItem getMnuVerify() {
-		if (mnuVerify == null) {
-			mnuVerify = new JMenuItem("Verify");
-		}
-		return mnuVerify;
-	}
-
-	private JMenuItem getMnuCut() {
-		if (mnuCut == null) {
-			mnuCut = new JMenuItem("Cut");
-		}
-		return mnuCut;
-	}
-
-	private JMenuItem getMnuCopy() {
-		if (mnuCopy == null) {
-			mnuCopy = new JMenuItem("Copy");
-		}
-		return mnuCopy;
-	}
-
-	private JMenuItem getMnuPaste() {
-		if (mnuPaste == null) {
-			mnuPaste = new JMenuItem("Paste");
-			mnuPaste.setVisible(false);
-		}
-		return mnuPaste;
-	}
-
-	private JMenuItem getMnuRename() {
-		if (mnuRename == null) {
-			mnuRename = new JMenuItem("Rename");
-		}
-		return mnuRename;
-	}
-
-	private JMenuItem getMnuDelete() {
-		if (mnuDelete == null) {
-			mnuDelete = new JMenuItem("Delete");
-		}
-		return mnuDelete;
+		CoreHandler.getInstance().currentUser = null;
+		this.isLogged();
 	}
 
 	protected void do_tbFiles_mouseClicked(MouseEvent me) {
@@ -544,6 +451,17 @@ public class FileManager {
 	private void browserBack() {
 		if (this.currentPath.getParentFile() != null) {
 			this.browseFiles(this.currentPath.getParentFile());
+		}
+	}
+
+	private void isLogged() {
+		if (CoreHandler.getInstance().currentUser == null) {
+			this.frmMain.setVisible(false);
+			this.loginDialog.setVisible(true);
+			this.frmMain.setVisible(true);
+		}
+		if (CoreHandler.getInstance().currentUser != null) {
+			this.lblUser.setText(CoreHandler.getInstance().currentUser.toString());
 		}
 	}
 }
