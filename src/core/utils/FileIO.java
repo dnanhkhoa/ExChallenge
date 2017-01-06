@@ -135,9 +135,19 @@ public final class FileIO {
 	public static void decompress(File inFile, File outFile, ObservableModel observableModel)
 			throws FileNotFoundException, IOException {
 
+		long actualSize = 0;
+		try (InputStream inputStream = new FileInputStream(inFile)) {
+			try (ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
+				ZipEntry zipEntry = zipInputStream.getNextEntry();
+				zipInputStream.closeEntry();
+				zipInputStream.getNextEntry();
+				actualSize = zipEntry.getSize();
+			}
+		}
 		try (InputStream inputStream = new FileInputStream(inFile)) {
 			try (ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
 				try (OutputStream outputStream = new FileOutputStream(outFile)) {
+
 					ZipEntry zipEntry = zipInputStream.getNextEntry();
 
 					if (observableModel == null) {
@@ -147,8 +157,9 @@ public final class FileIO {
 							outputStream.write(buffer, 0, bytesRead);
 						}
 					} else {
+
 						ProgressInfo progressInfo = new ProgressInfo("Decompressing...",
-								(zipEntry.getSize() - 1) / FileIO.BLOCK_SIZE + 1, 0);
+								(actualSize - 1) / FileIO.BLOCK_SIZE + 1, 0);
 
 						observableModel.setChanged();
 						observableModel.notifyObservers(progressInfo);

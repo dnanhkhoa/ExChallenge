@@ -47,7 +47,7 @@ public class EditDialog extends JDialog {
 		setResizable(false);
 		setModal(true);
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 14));
-		setTitle("Register");
+		setTitle("Update");
 		setFont(new Font("Dialog", Font.PLAIN, 14));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);

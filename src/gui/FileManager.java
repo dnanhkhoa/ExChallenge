@@ -913,31 +913,35 @@ public class FileManager {
 	}
 
 	protected void do_mnuDelete_actionPerformed(ActionEvent e) {
-		if (this.tbFiles.getSelectedRowCount() != 1) {
+		if (this.tbFiles.getSelectedRowCount() == 0) {
 			JOptionPane.showMessageDialog(this.frmMain, "Please select a file!");
 			return;
 		}
 
-		FileModel fileModel = this.tableModel.fileModels.get(this.tbFiles.getSelectedRow());
-		File file = new File(fileModel.getPath());
-		if (file.exists()) {
-			if (JOptionPane.showConfirmDialog(this.frmMain, "Are you sure?", "Confirm",
-					JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-				try {
-					this.monitor.stop();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+		try {
+			this.monitor.stop();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-				try {
-					FileUtils.forceDelete(file);
-				} catch (IOException ex) {
-					JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
-				}
+		int[] indices = this.tbFiles.getSelectedRows();
 
-				this.browseFiles(this.currentPath);
+		for (int i : indices) {
+			FileModel fileModel = this.tableModel.fileModels.get(i);
+			File file = new File(fileModel.getPath());
+			if (file.exists()) {
+				if (JOptionPane.showConfirmDialog(this.frmMain, String.format("Are you sure you want to delete \"%s\" file?", fileModel.getName()), "Confirm",
+						JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+					try {
+						FileUtils.forceDelete(file);
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(this.frmMain, ex.getMessage());
+					}
+				}
 			}
 		}
+
+		this.browseFiles(this.currentPath);
 	}
 
 	protected void checkItemMenu() {

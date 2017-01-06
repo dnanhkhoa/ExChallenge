@@ -100,81 +100,85 @@ public final class FileHandler {
 		File packedFile = File.createTempFile("enc", ".pack");
 		File zippedFile = null;
 
-		FileIO.pack(this.paths, packedFile, this.observable);
-		File inFile = packedFile;
+		try {
 
-		if (this.isCompress) {
-			zippedFile = File.createTempFile("enc", ".zip");
-			FileIO.compress(packedFile, zippedFile, this.observable);
-			inFile = zippedFile;
-		}
+			FileIO.pack(this.paths, packedFile, this.observable);
+			File inFile = packedFile;
 
-		// Encrypt
-		BaseAlgo cipher = this.getCipher(null, null);
-		int blockSize = cipher.blockSize();
+			if (this.isCompress) {
+				zippedFile = File.createTempFile("enc", ".zip");
+				FileIO.compress(packedFile, zippedFile, this.observable);
+				inFile = zippedFile;
+			}
 
-		RSA rsa = new RSA(user.getPublicKey(), user.getKeySize(), true);
+			// Encrypt
+			BaseAlgo cipher = this.getCipher(null, null);
+			int blockSize = cipher.blockSize();
 
-		FileMeta fileMeta = new FileMeta();
-		fileMeta.put("algo", this.algo);
-		fileMeta.put("moo", this.operation);
-		fileMeta.put("pm", this.padding);
-		fileMeta.put("compress", this.isCompress);
-		fileMeta.put("key", rsa.doFinal(cipher.getKey().getEncoded()));
-		fileMeta.put("iv", cipher.getIV());
-		fileMeta.put("block", cipher.outputBlockSize());
+			RSA rsa = new RSA(user.getPublicKey(), user.getKeySize(), true);
 
-		if (this.observable == null) {
+			FileMeta fileMeta = new FileMeta();
+			fileMeta.put("algo", this.algo);
+			fileMeta.put("moo", this.operation);
+			fileMeta.put("pm", this.padding);
+			fileMeta.put("compress", this.isCompress);
+			fileMeta.put("key", rsa.doFinal(cipher.getKey().getEncoded()));
+			fileMeta.put("iv", cipher.getIV());
+			fileMeta.put("block", cipher.outputBlockSize());
 
-			try (FileWrapper fileWrapper = new FileWrapper(outFile, fileMeta, this.SIGNATURE)) {
-				try (InputStream inputStream = new FileInputStream(inFile)) {
+			if (this.observable == null) {
 
-					byte[] buffer = new byte[blockSize];
-					while (inputStream.read(buffer) > 0) {
-						fileWrapper.write(cipher.doFinal(buffer));
+				try (FileWrapper fileWrapper = new FileWrapper(outFile, fileMeta, FileHandler.SIGNATURE)) {
+					try (InputStream inputStream = new FileInputStream(inFile)) {
+
+						byte[] buffer = new byte[blockSize];
+						while (inputStream.read(buffer) > 0) {
+							fileWrapper.write(cipher.doFinal(buffer));
+						}
+
 					}
+				}
+			} else {
 
+				ProgressInfo progressInfo = new ProgressInfo("Encrypting...",
+						(FileUtils.sizeOf(inFile) - 1) / blockSize + 1, 0);
+
+				this.observable.setChanged();
+				this.observable.notifyObservers(progressInfo);
+
+				try (FileWrapper fileWrapper = new FileWrapper(outFile, fileMeta, FileHandler.SIGNATURE)) {
+					try (InputStream inputStream = new FileInputStream(inFile)) {
+
+						byte[] buffer = new byte[blockSize];
+						while (inputStream.read(buffer) > 0) {
+							fileWrapper.write(cipher.doFinal(buffer));
+
+							progressInfo.increase();
+							this.observable.setChanged();
+							this.observable.notifyObservers(progressInfo);
+						}
+
+					}
 				}
 			}
-		} else {
 
-			ProgressInfo progressInfo = new ProgressInfo("Encrypting...",
-					(FileUtils.sizeOf(inFile) - 1) / blockSize + 1, 0);
-
-			this.observable.setChanged();
-			this.observable.notifyObservers(progressInfo);
-
-			try (FileWrapper fileWrapper = new FileWrapper(outFile, fileMeta, this.SIGNATURE)) {
-				try (InputStream inputStream = new FileInputStream(inFile)) {
-
-					byte[] buffer = new byte[blockSize];
-					while (inputStream.read(buffer) > 0) {
-						fileWrapper.write(cipher.doFinal(buffer));
-
-						progressInfo.increase();
-						this.observable.setChanged();
-						this.observable.notifyObservers(progressInfo);
-					}
-
-				}
+		} finally {
+			if (zippedFile != null) {
+				FileUtils.forceDelete(zippedFile);
 			}
+			FileUtils.forceDelete(packedFile);
 		}
-
-		if (zippedFile != null) {
-			FileUtils.forceDelete(zippedFile);
-		}
-		FileUtils.forceDelete(packedFile);
 	}
 
-	public void decrypt(File outDir, User user, String password) throws ClassNotFoundException, Exception {
+	public void decrypt(File outDir, User user, String password) throws Exception {
 		if (this.paths.isEmpty()) {
 			throw new ExceptionInfo("List is empty!");
 		}
 		if (this.paths.size() > 1) {
-			throw new ExceptionInfo("Can not process multi-file!");
+			throw new ExceptionInfo("Can not decrypt multi-file!");
 		}
 		if (!outDir.isDirectory()) {
-			throw new ExceptionInfo("Path must be a directory!");
+			throw new ExceptionInfo("Destination path must be a directory!");
 		}
 		File inFile = this.paths.get(0);
 
@@ -183,8 +187,10 @@ public final class FileHandler {
 		}
 
 		File tempFile = File.createTempFile("dec", "tmp");
+		File unzipFile = null;
 
-		try (FileUnwrapper fileUnwrapper = new FileUnwrapper(inFile, this.SIGNATURE)) {
+		try (FileUnwrapper fileUnwrapper = new FileUnwrapper(inFile, FileHandler.SIGNATURE)) {
+
 			FileMeta fileMeta = fileUnwrapper.readFileMeta();
 
 			RSA rsa = new RSA(user.getPrivateKey(password), user.getKeySize(), false);
@@ -239,7 +245,6 @@ public final class FileHandler {
 			}
 
 			inFile = tempFile;
-			File unzipFile = null;
 
 			if (this.isCompress) {
 				unzipFile = File.createTempFile("dec", "tmp");
@@ -249,6 +254,7 @@ public final class FileHandler {
 
 			FileIO.unpack(inFile, outDir, this.observable);
 
+		} finally {
 			if (unzipFile != null) {
 				FileUtils.forceDelete(unzipFile);
 			}
